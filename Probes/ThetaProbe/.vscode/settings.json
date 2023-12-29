@@ -1,0 +1,11 @@
+{
+    "editor.minimap.maxColumn": 60,
+    "editor.indentSize": "tabSize",
+    "files.associations": {
+        "string": "cpp"
+    },
+    "C_Cpp.formatting": "disabled",
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "[cpp]": { "editor.defaultFormatter": "psycha0s.cpp-format" },
+}
