@@ -4,9 +4,16 @@
 
 #include <stdint.h>
 
+
 // ******* One Wire *******
 constexpr uint8_t ONE_WIRE_CH1_PIN = 32;
 constexpr uint8_t ONE_WIRE_CH2_PIN = 33;
+
+// ******* Digital IO *******
+constexpr uint8_t LED_ALIVE_PIN = 4;
+constexpr uint8_t LED_CONNECTED_PIN = 2;
+constexpr uint8_t RELAY_CH1_PIN = 27;
+constexpr uint8_t RELAY_CH2_PIN = 12;
 
 // ******* DS18B20 device *******
 // Conversion precision in bit
@@ -33,5 +40,6 @@ constexpr uint8_t BME280_SDA_PIN = 21;
 constexpr uint8_t BME280_SCL_PIN = 22;
 // float getSealevelForAltitude() 
 //    const {return (float) _bme280_data.pressure / 100.0 / pow(1.0 - (_altitude / 44330.0), 5.255);}
+
 
 #endif /* INSTANCES_CONFIG_H_ */

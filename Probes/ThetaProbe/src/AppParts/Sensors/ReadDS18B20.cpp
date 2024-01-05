@@ -11,15 +11,6 @@ DallasTemperature sensorsCh1(&oneWireCh1);
 DallasTemperature sensorsCh2(&oneWireCh2);
 
 
-void ReadSensors(void *unused_arg)
-{
-
-
-}
-
-
-
-
 // OneWire DS18S20, DS18B20, DS1822 Temperature Example
 //
 // http://www.pjrc.com/teensy/td_libs_OneWire.html
