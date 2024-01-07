@@ -132,7 +132,7 @@ void MeasurementPivotCreateId_UT() {
     MeasurementPivot::CreateId(MeasurementPivot::SensorKindType::BME_PRESS_76);
 
   uint8_t* maskedIdPtr = (uint8_t*) &sensId;
-  Serial.println(maskedIdPtr[7]);
+  //Serial.println(maskedIdPtr[7]);
   TEST_ASSERT_EQUAL(3, maskedIdPtr[7]);
 
   msmnt::Measurement::SensorId macMask = 0x00FFFFFFFFFFFFFF; // little endian
@@ -140,6 +140,6 @@ void MeasurementPivotCreateId_UT() {
   uint64_t macSensId = 0;
   uint8_t *mac = (uint8_t *)&macSensId; // the last two bytes should stay empty
   OsHelpers::GetMacAddress(mac);
-  Serial.println(Measurement::DumpSensId(macSensId).c_str());
+  //Serial.println(Measurement::DumpSensId(macSensId).c_str());
   TEST_ASSERT_EQUAL(macSensId, macMaskedId);
 }

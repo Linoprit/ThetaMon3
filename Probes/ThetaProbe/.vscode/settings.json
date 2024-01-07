@@ -2,7 +2,8 @@
     "editor.minimap.maxColumn": 60,
     "editor.indentSize": "tabSize",
     "files.associations": {
-        "string": "cpp"
+        "string": "cpp",
+        "array": "cpp"
     },
     "C_Cpp.formatting": "disabled",
     "editor.formatOnPaste": true,

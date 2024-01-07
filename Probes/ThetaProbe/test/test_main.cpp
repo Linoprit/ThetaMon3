@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "Sensors_UT/Measurement_UT.cpp"
+#include "CommandLine_UT/CrcSocket_UT.cpp"
 #include "Wifi/Credentials.h"
 #include <Arduino.h>
 #include <WiFi.h>
@@ -79,6 +80,18 @@ void loop() {
 
   RUN_TEST(MeasurementPivotUpdateConfig_UT);
   RUN_TEST(MeasurementPivotCreateId_UT);
+
+  RUN_TEST(CrcAlgorithmTest_1);
+  RUN_TEST(CrcAlgorithmTest_2);
+  RUN_TEST(CrcCode_1);
+  RUN_TEST(CrcCode_2);
+  RUN_TEST(CrcCode_3);
+  RUN_TEST(CrcCode_4);
+  RUN_TEST(CrcCode_5);
+  RUN_TEST(CrcCode_6);
+  RUN_TEST(CrcCode_7);
+
+
 
   UNITY_END(); // stop unit testing
 }

@@ -35,4 +35,4 @@
 /Schematics/KikadLibs/espressif-kicad-addon.zip
 /Probes/ThetaProbe/include/Wifi/Credentials.h
 Credentials.h
-
+*.pyc
