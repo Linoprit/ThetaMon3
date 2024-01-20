@@ -3,6 +3,20 @@
  *
  *  Created on: 24.05.2021
  *      Author: harald
+ * 
+ * Crc calculation class.
+ * Adapt DEFAULT_CRC32_POLY to your needs.
+ * 
+ * usage:
+ * uint32_t CRC_Calculate(uint32_t pBuffer[], uint32_t BufferLength){
+ *   CalcCrc calcCrc;
+ *   calcCrc.resetCrc(); // Set default Crc initvalue
+ *   // Update crc with 4 bytes at a time
+ *   for (uint32_t i = 0U; i < BufferLength; i++) {
+ *     calcCrc.calcCrcUpdate(pBuffer[i]);
+ *   }
+ *   return calcCrc.GetActCrc();
+ * }
  */
 
 #ifndef CALCCRC_H_
@@ -10,7 +24,6 @@
 
 #include <stdint.h>
 #include <vector>
-#include <Arduino.h>
 
 using namespace std;
 

@@ -9,10 +9,9 @@
 #define SOCKETS_CRCSOCKET_H_
 
 #include "CalcCrc.h"
-#include <Arduino.h>
 #include <cstdint>
-#include <esp32/rom/crc.h>
 
+// Usually a Uint32 has four bytes
 constexpr uint8_t UINT32_BYTELEN = sizeof(uint32_t);
 
 class CrcSocket {
@@ -20,30 +19,7 @@ public:
   CrcSocket(){};
   virtual ~CrcSocket(){};
 
-  //////////////////////
-  // void resetCrc(void) { actCrc = DEFAULT_CRC_INITVALUE; }
-
-  // uint32_t calcCrcUpdate(uint32_t data) {
-  //   uint8_t i;
-  //   actCrc = actCrc ^ data;
-  //   for (i = 0; i < 32; i++) {
-  //     if (actCrc & 0x80000000)
-  //       actCrc = (actCrc << 1) ^ DEFAULT_CRC32_POLY;
-  //     else
-  //       actCrc <<= 1;
-  //   }
-  //   return actCrc;
-  // }
-
-  // uint32_t HAL_CRC_Accumulate(uint32_t pBuffer[], uint32_t BufferLength) {
-  //   uint32_t i;
-
-  //   for (i = 0U; i < BufferLength; i++) {
-  //     calcCrcUpdate(pBuffer[i]);
-  //   }
-  //   return actCrc;
-  // }
-
+  // Stm32 Cube Api using crc-hardware, which is a 32-bit engine.
   static uint32_t HAL_CRC_Calculate(uint32_t pBuffer[], uint32_t BufferLength) {
     CalcCrc calcCrc;
 
@@ -53,7 +29,7 @@ public:
     }
     return calcCrc.GetActCrc();
   }
-  ////////////////////////////
+  
   /**
    * Calls the CRC-Engine and returns a 8-bit CRC, which is
    * simply the truncation of the 32-bit result.
@@ -112,17 +88,12 @@ public:
     return CrcSocket::calcChksum32(data32, uint32len);
   };
   /**
-   * MainFunction, passes the data to the crc-engine
+   * MainFunction, passes the data to the crc-engine of the Stm32
    */
   static uint32_t calcChksum32(uint32_t *data, uint32_t dataLen32) {
     uint32_t crc = HAL_CRC_Calculate(data, dataLen32);
     return crc;
   };
-
-private:
-  uint32_t actCrc; // current crc-value
-  static constexpr uint32_t DEFAULT_CRC32_POLY = 0x04C11DB7U;
-  static constexpr uint32_t DEFAULT_CRC_INITVALUE = 0xFFFFFFFFU;
 };
 
 #endif /* SOCKETS_CRCSOCKET_H_ */

@@ -16,7 +16,8 @@ extern "C" {
 void led_task_gpio(void* unused_arg);
 void led_task_pico(void* unused_arg);
 void ReadSensors(void* unused_arg);
-void startUpdateTask(void* unused_arg);
+void startSensorsTask(void* unused_arg);
+void startPrintTask(void* unused_arg);
 
 #ifdef __cplusplus
 }           // extern "C"
@@ -40,8 +41,8 @@ void startUpdateTask(void* unused_arg);
 #include "esp_task_wdt.h"
 
 // act measured values are put in here
-extern volatile QueueHandle_t measurementQueue;
-extern SemaphoreHandle_t measurementArraySmphr;
+// extern volatile QueueHandle_t measurementQueue;
+// extern SemaphoreHandle_t measurementArraySmphr;
 
 
 // from examples, to be deleted.

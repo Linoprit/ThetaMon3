@@ -3,6 +3,7 @@
 
 #include "Config.h"
 #include <Arduino.h>
+#include <algorithm> // std::min
 #include <array>
 #include <cstring>
 #include <limits>
@@ -48,10 +49,10 @@ public:
     GPIO = 4, // Digital Pin (Relay)
   };
 
-  SensorId sensId = INVALID_SENS_ID; // 8 bytes integer.
-  float meanValue = NAN;             // Mean value of values array.
-  uint32_t lastUpdateTick = 0;       // in seconds.
-  float minVal = 0.0f;               // switch relay on, if actValue below this.
+  SensorId sensorId = INVALID_SENS_ID; // 8 bytes integer.
+  float meanValue = NAN;               // Mean value of values array.
+  uint32_t lastUpdateTick = 0;         // in seconds.
+  float minVal = 0.0f;        // switch relay on, if actValue below this.
   float maxVal = 0.0f;        // switch relay off, if actValue above this.
   SensorType sensType = TEMP; // Which type is the sensor.
   SensorChannel sensChan =
@@ -82,15 +83,48 @@ public:
     }
   }
 
+  // Make a clean string, the maximum length of shortname-attribute.
+  static std::string MakeShortname(char *shortnameChar) {
+    std::string tmp =
+        std::string(shortnameChar, msmnt::Measurement::SHORTNAME_LEN);
+    return tmp;
+  }
+
+  static void CopyToShortname(char *oldShortname, char *newShortname) {
+    CopyToShortname(oldShortname, MakeShortname(newShortname));
+  }
+
+  // Copies the newShortname into oldShortname. Removes string-terminators and
+  // pads the result with spaces.
+  static void CopyToShortname(char *oldShortname, std::string newShortname) {
+    const uint16_t len = msmnt::Measurement::SHORTNAME_LEN;
+    memset(oldShortname, ' ', len);
+    uint16_t strLength = std::min((uint16_t)newShortname.length(), len);
+    memcpy(oldShortname, newShortname.c_str(), strLength);
+    // eliminate string terminators
+    for (uint16_t i = 0; i < len; i++) {
+      if (oldShortname[i] == '\0') {
+        oldShortname[i] = ' ';
+      }
+    }
+  }
+
+  void CopyToShortname(char *newShortname) {
+    CopyToShortname(shortname, newShortname);
+  }
+
   float GetMeanValue() { return meanValue; }
 
-  bool IsInvalidSensId() { return sensId == INVALID_SENS_ID; }
+  bool IsInvalidSensId() { return sensorId == INVALID_SENS_ID; }
 
   static bool IsInvalidSensId(SensorId id) { return id == INVALID_SENS_ID; }
 
   static SensorId CastArrayToSensId(uint8_t *address) {
     SensorId *temp = (SensorId *)address;
     return *temp;
+  }
+  static uint8_t *CastSensIdToArray(SensorId* sensId) {
+    return (uint8_t *) sensId;
   }
 
   static bool CompareSensorId(SensorIdArray address_left,
@@ -118,78 +152,58 @@ public:
   }
 
   void Dump() {
-    Serial.print("sensId = ");
-    Serial.print(sensId);
-    Serial.print(" (");
-    uint8_t *sensIdArray = (uint8_t *)&sensId;
-    for (uint_fast8_t i = 0; i < 8; i++) {
-      Serial.write(' ');
-      Serial.print(sensIdArray[i], HEX);
-    }
-    Serial.println(")");
+    Serial.printf("sensId = %llu ", sensorId);
+    Serial.printf("(%s)\n", DumpSensId(sensorId).c_str());
 
-    Serial.print("meanValue = ");
-    Serial.println(meanValue, 2);
-
-    Serial.print("lastUpdateTick = ");
-    Serial.println(lastUpdateTick);
-
-    Serial.print("minVal = ");
-    Serial.println(minVal, 2);
-
-    Serial.print("maxVal = ");
-    Serial.println(maxVal, 2);
+    Serial.printf("meanValue = %.02f\t", meanValue);
+    Serial.printf("lastUpdateTick = %lu\n", lastUpdateTick);
+    Serial.printf("minVal = %.03f\t\t", minVal);
+    Serial.printf("maxVal = %.2f\n", maxVal);
 
     Serial.print("sensType = ");
     switch (sensType) {
     case SensorType::TEMP:
-      Serial.println("TEMP");
+      Serial.print("TEMP");
       break;
     case SensorType::HUMIDITY:
-      Serial.println("HUMID");
+      Serial.print("HUMID");
       break;
     case SensorType::PRESS:
-      Serial.println("PRESS");
+      Serial.print("PRESS");
       break;
     case SensorType::RELAY:
-      Serial.println("RELAY");
+      Serial.print("RELAY");
       break;
     }
 
-    Serial.print("sensChan = ");
-    switch (sensType) {
+    Serial.print("\t\tsensChan = ");
+    switch (sensChan) {
     case SensorChannel::CH_1:
-      Serial.println("CH_1");
+      Serial.print("CH_1");
       break;
     case SensorChannel::CH_2:
-      Serial.println("CH_2");
+      Serial.print("CH_2");
       break;
     case SensorChannel::GPIO:
-      Serial.println("GPIO");
+      Serial.print("GPIO");
       break;
     case SensorChannel::I2C:
-      Serial.println("I2C");
+      Serial.print("I2C");
       break;
     case SensorChannel::SC_NONE:
-      Serial.println("NONE");
+      Serial.print("NONE");
       break;
     }
 
-    Serial.print("relayNr = ");
-    Serial.println(relayNr);
+    Serial.printf("\trelayNr = %i\n", relayNr);
 
     Serial.print("values = ");
     for (uint_fast8_t i = 0; i < VALUES_BUFF_LEN; i++) {
-      Serial.println(values[i], 2);
-      Serial.print(" ");
+      Serial.printf("%.2f ", values[i]);
     }
-    Serial.println();
 
-    Serial.print("valueIndex = ");
-    Serial.println(valueIndex);
-
-    Serial.print("shortname = ");
-    Serial.println(GetShortname().c_str());
+    Serial.printf("\t\tvalueIndex = %i\n", valueIndex);
+    Serial.printf("shortname = %s\n", GetShortname().c_str());
   }
 
 private:
@@ -214,14 +228,19 @@ typedef struct {
   uint32_t lastUpdateTick;
 } MeasurementType;
 
-typedef struct {
+class SensorConfigType {
+public:
   Measurement::SensorId sensorId;
   float minVal;
   float maxVal;
   Measurement::SensorType sensType;
   Measurement::RelayChannel relayNr; // 0 = no relay
   char shortname[Measurement::SHORTNAME_LEN];
-} SensorConfigType;
+
+  void CopyToShortname(char *newShortname) {
+    Measurement::CopyToShortname(shortname, newShortname);
+  }
+};
 
 } // namespace msmnt
 #endif /* APPLICATION_SENSORS_MEASUREMENTS_H_ */

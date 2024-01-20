@@ -12,9 +12,7 @@
 
 #include <esp32/rom/crc.h>
 
-void printUint64(uint64_t val) {
-  // Serial.printf("%08lx%08lx\r\n", ((uint32_t)((val >> 32) & 0xFFFFFFFF)),
-  //               ((uint32_t)(val & 0xFFFFFFFF)));
+void printUint64(uint64_t val) { 
   Serial.printf("%08lx\r\n", val);
 }
 

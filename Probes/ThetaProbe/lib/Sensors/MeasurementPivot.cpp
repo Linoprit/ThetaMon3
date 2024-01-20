@@ -8,7 +8,7 @@ Measurement *MeasurementPivot::GetNextMeasurement() {
   if (_indexIter >= MAX_SENSORS) {
     return nullptr;
   }
-  if (Measurement::IsInvalidSensId(_measurementArray[_indexIter].sensId)) {
+  if (Measurement::IsInvalidSensId(_measurementArray[_indexIter].sensorId)) {
     return nullptr;
   }
   return GetMeasurement(_indexIter++);
@@ -20,7 +20,7 @@ Measurement *MeasurementPivot::FindSensIdOrEmpty(Measurement::SensorId sensId) {
     if (actMeasurement->IsInvalidSensId()) {
       return nullptr;
     }
-    if (sensId == actMeasurement->sensId) {
+    if (sensId == actMeasurement->sensorId) {
       return actMeasurement;
     }
   }
@@ -48,7 +48,7 @@ bool MeasurementPivot::StoreSensId(Measurement::SensorId sensId,
     return false;
   }
 
-  actMeasurement->sensId = sensId;
+  actMeasurement->sensorId = sensId;
   actMeasurement->sensChan = sensorChannel;
   return true;
 }

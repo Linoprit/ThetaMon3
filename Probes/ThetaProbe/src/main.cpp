@@ -43,37 +43,55 @@
 
 #include <Arduino.h>
 
+#include "CommandLine.h"
 #include "Config.h"
-#include "Sensors/Measurement.h"
-#include "Sensors/MeasurementPivot.h"
+#include "Measurement.h"
+#include "MeasurementPivot.h"
+#include "OsHelpers.h"
 #include "TasksCommon.h"
 
 // Common tasks and queues definition
-TaskHandle_t updateTaskHandle = NULL;
-volatile QueueHandle_t measurementQueue = NULL;
-SemaphoreHandle_t measurementArraySmphr = NULL;
+TaskHandle_t sensorTaskHandle = NULL;
+// volatile QueueHandle_t measurementQueue = NULL;
+// SemaphoreHandle_t measurementArraySmphr = NULL;
+TaskHandle_t printTaskHandle = NULL;
 
 
 void setup() {
   Serial.begin(115200);
   Serial.println();
 
+  // Todo move to gpio_init
   pinMode(LED_ALIVE_PIN, OUTPUT);
   pinMode(LED_CONNECTED_PIN, OUTPUT);
   pinMode(RELAY_CH1_PIN, OUTPUT);
   pinMode(RELAY_CH2_PIN, OUTPUT);
 
-  // init common tasks and queues
-  xTaskCreate(startUpdateTask, "UPDATE_TASK", 1024, NULL, 1, &updateTaskHandle);
-  measurementQueue = xQueueCreate(MAX_SENSORS, sizeof(msmnt::MeasurementType));
-  measurementArraySmphr = xSemaphoreCreateCounting(5, 0);
+  cLine::CommandLine::instance().init();
+  delay(500);
+  cLine::CommandLine::instance().splash();
 
-  //
-  //
-  //
+  // init common tasks and queues
+  xTaskCreate(startSensorsTask, "SENSOR_TASK", 1024, NULL, 1,
+              &sensorTaskHandle);
+  // measurementQueue = xQueueCreate(MAX_SENSORS,
+  // sizeof(msmnt::MeasurementType)); measurementArraySmphr =
+  // xSemaphoreCreateCounting(5, 0);
+
+
+  xTaskCreate(startPrintTask, "PRINT_TASK", 2048, NULL, 1,
+              &printTaskHandle);
 }
 
 void loop() {
+
+  // CommandLine
+  int incomingByte = Serial.read();
+  while (incomingByte != -1) {
+    cLine::CommandLine::instance().putChar(incomingByte);
+    incomingByte = Serial.read();
+  }
+  cLine::CommandLine::instance().cycle();
 
   // digitalWrite(LED_ALIVE_PIN, 1);
   // digitalWrite(LED_CONNECTED_PIN, 1);
@@ -85,5 +103,6 @@ void loop() {
   // digitalWrite(LED_CONNECTED_PIN, 0);
   // digitalWrite(RELAY_CH1_PIN, 0);
   // digitalWrite(RELAY_CH2_PIN, 0);
-  delay(1000);
+
+  delay(20);
 }

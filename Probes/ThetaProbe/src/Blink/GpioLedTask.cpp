@@ -7,7 +7,7 @@
 
 #include "TasksCommon.h"
 
-
+// Todo remove
 void led_task_gpio(void* unused_arg) {
 
     uint8_t passed_value_buffer = 0;

@@ -7,7 +7,7 @@
 
 #include "TasksCommon.h"
 
-
+// Todo remove
 void led_task_pico(void* unused_arg) {
 
     uint8_t pico_led_state = 0;

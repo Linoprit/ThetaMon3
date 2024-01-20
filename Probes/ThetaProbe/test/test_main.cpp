@@ -1,13 +1,13 @@
+#include "CommandLine_UT/CrcSocket_UT.cpp"
+#include "CommandLine_UT/Lexer_UT.cpp"
 #include "Config.h"
 #include "Sensors_UT/Measurement_UT.cpp"
-#include "CommandLine_UT/CrcSocket_UT.cpp"
 #include "Wifi/Credentials.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <unity.h>
 
-//#define UNITY_FLOAT_PRECISION 3
-//#include "../src/  MeasurementPivot.cpp"
+// To get printed output, run with: pio test -v
 
 void setUp(void) {
   // set stuff up here
@@ -91,7 +91,20 @@ void loop() {
   RUN_TEST(CrcCode_6);
   RUN_TEST(CrcCode_7);
 
-
+  RUN_TEST(LexerCommandTest);
+  RUN_TEST(LexerUInt32Test);
+  RUN_TEST(LexerUInt32AsUInt64Test);
+  RUN_TEST(LexerUInt64Test);
+  RUN_TEST(LexerSignInt32Test);
+  RUN_TEST(LexerFloatTest);
+  RUN_TEST(LexerNegFloatTest);
+  RUN_TEST(LexerStringTest);
+  RUN_TEST(LexerStringAllChars);
+  RUN_TEST(LexerStringOverflow);
+  RUN_TEST(LexerStringNotClosed);
+  RUN_TEST(CopyToShortname_UT);
+  RUN_TEST(LexerCommandLine);
+  RUN_TEST(LexerPrintCmdHashes);
 
   UNITY_END(); // stop unit testing
 }

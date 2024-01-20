@@ -10,6 +10,9 @@
             "includePath": [
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/include",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/src",
+                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Interpreter",
+                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/CommandLine",
+                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Sensors",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/System",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
@@ -214,7 +217,6 @@
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/variants/esp32",
-                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/CommandLine",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Unity/src",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
@@ -251,6 +253,9 @@
                 "path": [
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/include",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/src",
+                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Interpreter",
+                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/CommandLine",
+                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Sensors",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/System",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
@@ -455,7 +460,6 @@
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/variants/esp32",
-                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/CommandLine",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Unity/src",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
@@ -489,7 +493,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60111",
+                "PLATFORMIO=60113",
                 "ARDUINO_ESP32_DEV",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",

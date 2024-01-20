@@ -3,7 +3,16 @@
     "editor.indentSize": "tabSize",
     "files.associations": {
         "string": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "optional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "cstring": "cpp"
     },
     "C_Cpp.formatting": "disabled",
     "editor.formatOnPaste": true,
