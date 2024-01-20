@@ -49,10 +49,12 @@ public:
   // Looks for the next free slot and stores the sensId there.
   // Returns true, if a free slot was found. If the Id was already in the array,
   // false is returned, and the Id is not stored (avoid double entries).
-  bool StoreSensId(Measurement::SensorId sensId,
-                   Measurement::SensorChannel sensorChannel);
+  bool StoreSensId(
+      Measurement::SensorId sensId, Measurement::SensorChannel sensorChannel,
+      Measurement::SensorType sensorType = Measurement::SensorType::TEMP);
   bool StoreSensId(Measurement::SensorIdArray sensIdArray,
-                   Measurement::SensorChannel sensorChannel);
+                   Measurement::SensorChannel sensorChannel,
+                   Measurement::SensorType sensorType = Measurement::SensorType::TEMP);
   // Sets the iterator to zero. The iterator is used by all GetNext* functions.
   void ResetIter() { _indexIter = 0; };
   // Returns the pointer to the measurement, where _indexIter points to.

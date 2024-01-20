@@ -14,7 +14,7 @@ class Ds1820Helper {
 public:
   Ds1820Helper(Measurement::SensorChannel channel, uint8_t oneWirePin, uint8_t resolution,
                MeasurementPivot *measurementPivot);
-  ~Ds1820Helper(){};
+  virtual ~Ds1820Helper(){};
 
   void initHardware();
   void cycle();

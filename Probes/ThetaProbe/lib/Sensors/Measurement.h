@@ -43,10 +43,11 @@ public:
   };
   enum SensorChannel {
     SC_NONE = 0,
-    CH_1 = 1, // OneWire Channel 1
-    CH_2 = 2, // OneWire Channwl 2
-    I2C = 3,  // I2C (BME280)
-    GPIO = 4, // Digital Pin (Relay)
+    CH_1 = 1,  // OneWire Channel 1
+    CH_2 = 2,  // OneWire Channwl 2
+    I2C_1 = 3, // I2C (BME280)
+    I2C_2 = 4, // unused
+    GPIO = 5,  // Digital Pin (Relay)
   };
 
   SensorId sensorId = INVALID_SENS_ID; // 8 bytes integer.
@@ -123,8 +124,8 @@ public:
     SensorId *temp = (SensorId *)address;
     return *temp;
   }
-  static uint8_t *CastSensIdToArray(SensorId* sensId) {
-    return (uint8_t *) sensId;
+  static uint8_t *CastSensIdToArray(SensorId *sensId) {
+    return (uint8_t *)sensId;
   }
 
   static bool CompareSensorId(SensorIdArray address_left,
@@ -151,50 +152,60 @@ public:
     return std::string(buffer);
   }
 
+  static std::string DumpSensChannel(SensorChannel sensChan) {
+    switch (sensChan) {
+    case SensorChannel::CH_1:
+      return "CH_1";
+      break;
+    case SensorChannel::CH_2:
+      return "CH_2";
+      break;
+    case SensorChannel::GPIO:
+      return "GPIO";
+      break;
+    case SensorChannel::I2C_1:
+      return "I2C_1";
+      break;
+    case SensorChannel::I2C_2:
+      return "I2C_2";
+      break;
+    case SensorChannel::SC_NONE:
+      return "NONE";
+      break;
+    }
+    return "Error";
+  }
+
+  static std::string DumpSensType(SensorType sensType) {
+    switch (sensType) {
+    case SensorType::TEMP:
+      return "TEMP";
+      break;
+    case SensorType::HUMIDITY:
+      return "HUMID";
+      break;
+    case SensorType::PRESS:
+      return "PRESS";
+      break;
+    case SensorType::RELAY:
+      return "RELAY";
+      break;
+    }
+    return "Error";
+  }
+
   void Dump() {
     Serial.printf("sensId = %llu ", sensorId);
     Serial.printf("(%s)\n", DumpSensId(sensorId).c_str());
 
     Serial.printf("meanValue = %.02f\t", meanValue);
     Serial.printf("lastUpdateTick = %lu\n", lastUpdateTick);
+
     Serial.printf("minVal = %.03f\t\t", minVal);
     Serial.printf("maxVal = %.2f\n", maxVal);
 
-    Serial.print("sensType = ");
-    switch (sensType) {
-    case SensorType::TEMP:
-      Serial.print("TEMP");
-      break;
-    case SensorType::HUMIDITY:
-      Serial.print("HUMID");
-      break;
-    case SensorType::PRESS:
-      Serial.print("PRESS");
-      break;
-    case SensorType::RELAY:
-      Serial.print("RELAY");
-      break;
-    }
-
-    Serial.print("\t\tsensChan = ");
-    switch (sensChan) {
-    case SensorChannel::CH_1:
-      Serial.print("CH_1");
-      break;
-    case SensorChannel::CH_2:
-      Serial.print("CH_2");
-      break;
-    case SensorChannel::GPIO:
-      Serial.print("GPIO");
-      break;
-    case SensorChannel::I2C:
-      Serial.print("I2C");
-      break;
-    case SensorChannel::SC_NONE:
-      Serial.print("NONE");
-      break;
-    }
-
+    Serial.printf("sensType = %s", DumpSensType(sensType).c_str());
+    Serial.printf("\t\tsensChan = %s", DumpSensChannel(sensChan).c_str());
     Serial.printf("\trelayNr = %i\n", relayNr);
 
     Serial.print("values = ");

@@ -67,12 +67,14 @@ void setup() {
   pinMode(RELAY_CH1_PIN, OUTPUT);
   pinMode(RELAY_CH2_PIN, OUTPUT);
 
+
+
   cLine::CommandLine::instance().init();
   delay(500);
   cLine::CommandLine::instance().splash();
 
   // init common tasks and queues
-  xTaskCreate(startSensorsTask, "SENSOR_TASK", 1024, NULL, 1,
+  xTaskCreate(startSensorsTask, "SENSOR_TASK", 2024, NULL, 1,
               &sensorTaskHandle);
   // measurementQueue = xQueueCreate(MAX_SENSORS,
   // sizeof(msmnt::MeasurementType)); measurementArraySmphr =
@@ -81,6 +83,13 @@ void setup() {
 
   xTaskCreate(startPrintTask, "PRINT_TASK", 2048, NULL, 1,
               &printTaskHandle);
+
+
+
+  // uint8_t mac[8]; // the last two bytes should stay empty
+  // OsHelpers::GetMacAddress(mac);
+  // Serial.println("MAC: ");
+  // Serial.println(msmnt::Measurement::DumpSensIdArray(mac).c_str());
 }
 
 void loop() {

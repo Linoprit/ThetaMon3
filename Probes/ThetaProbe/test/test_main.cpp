@@ -58,7 +58,7 @@ void setup() {
   delay(2000);
 
   Serial.begin(115200);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   // TODO move this to a kind of GPIO_Init
   pinMode(LED_ALIVE_PIN, OUTPUT);

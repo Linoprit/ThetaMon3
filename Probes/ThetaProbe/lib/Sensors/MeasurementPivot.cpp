@@ -38,7 +38,8 @@ Measurement *MeasurementPivot::FindNextFreeSlot() {
 }
 
 bool MeasurementPivot::StoreSensId(Measurement::SensorId sensId,
-                                   Measurement::SensorChannel sensorChannel) {
+                                   Measurement::SensorChannel sensorChannel, 
+                                   Measurement::SensorType sensorType) {
   Measurement *actMeasurement = FindSensIdOrEmpty(sensId);
   if (actMeasurement != nullptr) {
     return false;
@@ -50,13 +51,15 @@ bool MeasurementPivot::StoreSensId(Measurement::SensorId sensId,
 
   actMeasurement->sensorId = sensId;
   actMeasurement->sensChan = sensorChannel;
+  actMeasurement->sensType = sensorType;
   return true;
 }
 
 bool MeasurementPivot::StoreSensId(Measurement::SensorIdArray sensIdArray,
-                                   Measurement::SensorChannel sensorChannel) {
+                                   Measurement::SensorChannel sensorChannel,
+                                   Measurement::SensorType sensorType) {
   return StoreSensId(Measurement::CastArrayToSensId(sensIdArray),
-                     sensorChannel);
+                     sensorChannel, sensorType);
 }
 
 bool MeasurementPivot::UpdateValue(Measurement::SensorId sensId, float value) {

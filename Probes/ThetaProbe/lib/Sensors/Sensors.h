@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Ds1820Helper.h>
+#include <Bme280Helper.h>
 #include <MeasurementPivot.h>
 
 namespace msmnt {
@@ -23,8 +24,8 @@ private:
   MeasurementPivot _measurementPivot;
   Ds1820Helper _ds1820Ch1;
   Ds1820Helper _ds1820Ch2;
-  // Todo Ds1820Helper _ds1820Ch2;
-  // Todo BMS280 _bms280;
+  Bme280Helper _bme280;
+  // Todo BME280 _bme280;
 };
 
 } // namespace msmnt
