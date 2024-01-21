@@ -1,0 +1,13 @@
+2024-01-21 13:42:52,942 [INFO   ] ThetaMonitor v000.001.001
+2024-01-21 13:42:52,942 [INFO   ] Settings comment: Theta Monitor App
+2024-01-21 13:42:52,942 [INFO   ] working dir is: 'data'
+2024-01-21 13:42:52,942 [INFO   ] logLevel is: 'verbose'
+2024-01-21 13:44:09,946 [INFO   ] ThetaMonitor v000.001.001
+2024-01-21 13:44:09,946 [INFO   ] Settings comment: Theta Monitor App
+2024-01-21 13:44:09,946 [INFO   ] working dir is: 'data'
+2024-01-21 13:44:09,947 [INFO   ] logLevel is: 'verbose'
+2024-01-21 13:59:24,631 [INFO   ] ThetaMonitor v000.001.001
+2024-01-21 13:59:24,631 [INFO   ] Settings comment: Theta Monitor App
+2024-01-21 13:59:24,632 [INFO   ] working dir is: 'data'
+2024-01-21 13:59:24,632 [INFO   ] logLevel is: 'verbose'
+2024-01-21 14:02:06,098 [ERROR  ] Cannot open serial port /dev/ttyS1
