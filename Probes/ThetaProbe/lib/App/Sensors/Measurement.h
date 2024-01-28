@@ -1,8 +1,8 @@
 #ifndef APPLICATION_SENSORS_MEASUREMENTS_H_
 #define APPLICATION_SENSORS_MEASUREMENTS_H_
 
-#include "Config.h"
 #include <Arduino.h>
+#include <Config.h>
 #include <algorithm> // std::min
 #include <array>
 #include <cstring>
@@ -62,6 +62,7 @@ public:
   float values[VALUES_BUFF_LEN] = {0.0f}; // last measurement i.
   uint8_t valueIndex = 0; // pos, where the next value is stored to.
   char shortname[Measurement::SHORTNAME_LEN] = {'-'}; // without \0.
+  bool configChanged = false; // indicator, if config was touched after init.
 
   Measurement() { InitValueArray(); }
   virtual ~Measurement() {}
@@ -194,6 +195,12 @@ public:
     return "Error";
   }
 
+  void GetConfigAsCmd(char *buffer) {
+    sprintf(buffer, "setSensId %llu %.2f %.2f %i %i \"%s\"\r\n", sensorId, minVal,
+            maxVal, sensType, relayNr, GetShortname().c_str());
+    // setSensId 16789727009993785128 3.5 5.0 0 0 "Test 003"
+  }
+
   void Dump() {
     Serial.printf("sensId = %llu ", sensorId);
     Serial.printf("(%s)\n", DumpSensId(sensorId).c_str());
@@ -201,7 +208,7 @@ public:
     Serial.printf("meanValue = %.02f\t", meanValue);
     Serial.printf("lastUpdateTick = %lu\n", lastUpdateTick);
 
-    Serial.printf("minVal = %.03f\t\t", minVal);
+    Serial.printf("minVal = %.2f\t\t", minVal);
     Serial.printf("maxVal = %.2f\n", maxVal);
 
     Serial.printf("sensType = %s", DumpSensType(sensType).c_str());
@@ -214,7 +221,14 @@ public:
     }
 
     Serial.printf("\t\tvalueIndex = %i\n", valueIndex);
-    Serial.printf("shortname = %s\n", GetShortname().c_str());
+    Serial.printf("shortname = %s", GetShortname().c_str());
+
+    Serial.printf("\tconfigChanged = ");
+    if (configChanged) {
+      Serial.printf("true\n");
+    } else {
+      Serial.printf("false\n");
+    }
   }
 
 private:

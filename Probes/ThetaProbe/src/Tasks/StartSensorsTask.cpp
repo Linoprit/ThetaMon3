@@ -1,6 +1,6 @@
 #include "TasksCommon.h"
 #include "Config.h"
-#include "Sensors.h"
+#include <Sensors/Sensors.h>
 //#include "Sensors/MeasurementTask.h"
 
 void startSensorsTask(void *unused_arg)

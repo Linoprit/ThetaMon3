@@ -8,16 +8,17 @@
 #ifndef SYSTEM_COMMANDLINE_H_
 #define SYSTEM_COMMANDLINE_H_
 
-#include "ComLineConfig.h"
 #include <Arduino.h>
-#include <History.h>
-#include <Interpreter.h>
-#include <SimpleQueue.h>
+#include "ComLineConfig.h"
+#include "History.h"
+#include <Interpreter/Interpreter.h>
+//#include <SimpleQueue.h>
 
 namespace cLine {
 
 constexpr uint8_t _KEY_ENTER = '\r';         // [enter]
-constexpr uint8_t _KEY_BACKSPACE = 127;      //'\b'; // [backspace]
+constexpr uint8_t _KEY_BACKSPACE_ALT = 127;  // [del]
+constexpr uint8_t _KEY_BACKSPACE = 8;        // [backspace]
 constexpr uint8_t _KEY_ESCAPE = '\x1b';      // [esc]
 constexpr uint8_t _KEY_SQBRACELEFT = '\x5b'; // [ [ ] square brace left
 
@@ -44,18 +45,21 @@ public:
   CommandLine();
   virtual ~CommandLine(){};
 
-  void init(void);
+  void init();
   static CommandLine &instance(void);
   void splash(void);
   void cycle(void);
 
   bool isInitDone(void) { return _flagInitIsDone; }
+  Interpreter *getInterpreter() { return &_interpret; }
 
   // must be called by the serial callback
   inline void putChar(uint8_t chr) {
-    if (!_keyBuffer.isFull()) {
-      _keyBuffer.enqueue(chr);
-    }
+    xQueueSendToBack(_keyBufferQueue, &chr, 5);
+
+    // if (!_keyBuffer.isFull()) {
+    //   _keyBuffer.enqueue(chr);
+    // }
   }
 
   // Terminal control functions
@@ -124,7 +128,9 @@ public:
   static void termPrompt() { Serial.printf(">"); };
 
 protected:
-  SimpleQueue<uint8_t> _keyBuffer;
+  // SimpleQueue<uint8_t> _keyBuffer;
+  QueueHandle_t _keyBufferQueue;
+
   History _history;
   Interpreter _interpret;
   CmdBufferType _cmdBuffer;

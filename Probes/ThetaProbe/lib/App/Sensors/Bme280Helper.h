@@ -1,12 +1,12 @@
 #ifndef BME280HELPER_H
 #define BME280HELPER_H
 
-#pragma once
+//#pragma once
 
 #include <Adafruit_BME280.h>
 //#include <Adafruit_Sensor.h>
-#include <Measurement.h>
-#include <MeasurementPivot.h>
+#include "Measurement.h"
+#include "MeasurementPivot.h"
 
 namespace msmnt {
 

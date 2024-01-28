@@ -1,7 +1,7 @@
 #ifndef MEASUREMENTARRAY_H
 #define MEASUREMENTARRAY_H
 
-#pragma once
+//#pragma once
 
 #include "Measurement.h"
 
@@ -35,7 +35,14 @@ public:
   };
 
   // Copys the values from config into the corresponding Measurement.
+  // Returns false, if sensId is not found.
+  // The flag 'configChanged' will be set. If the config table will be
+  // saved to FS later, then this value will be considered.
   bool UpdateConfig(SensorConfigType config);
+
+  // Needs to be called after init, to avoid saving configs, 
+  // that hasnt been touched. 
+  void ResetConfigChangedFlags();
 
   // Generates an Id for Relay, or I2C-sensors (i.e. BME), based on the MAC
   // address.
@@ -52,9 +59,10 @@ public:
   bool StoreSensId(
       Measurement::SensorId sensId, Measurement::SensorChannel sensorChannel,
       Measurement::SensorType sensorType = Measurement::SensorType::TEMP);
-  bool StoreSensId(Measurement::SensorIdArray sensIdArray,
-                   Measurement::SensorChannel sensorChannel,
-                   Measurement::SensorType sensorType = Measurement::SensorType::TEMP);
+  bool StoreSensId(
+      Measurement::SensorIdArray sensIdArray,
+      Measurement::SensorChannel sensorChannel,
+      Measurement::SensorType sensorType = Measurement::SensorType::TEMP);
   // Sets the iterator to zero. The iterator is used by all GetNext* functions.
   void ResetIter() { _indexIter = 0; };
   // Returns the pointer to the measurement, where _indexIter points to.

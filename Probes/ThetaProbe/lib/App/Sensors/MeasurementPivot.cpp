@@ -1,5 +1,5 @@
 #include "MeasurementPivot.h"
-#include "OsHelpers.h"
+#include <OsHelpers.h>
 #include <sys/time.h>
 
 namespace msmnt {
@@ -38,7 +38,7 @@ Measurement *MeasurementPivot::FindNextFreeSlot() {
 }
 
 bool MeasurementPivot::StoreSensId(Measurement::SensorId sensId,
-                                   Measurement::SensorChannel sensorChannel, 
+                                   Measurement::SensorChannel sensorChannel,
                                    Measurement::SensorType sensorType) {
   Measurement *actMeasurement = FindSensIdOrEmpty(sensId);
   if (actMeasurement != nullptr) {
@@ -58,8 +58,8 @@ bool MeasurementPivot::StoreSensId(Measurement::SensorId sensId,
 bool MeasurementPivot::StoreSensId(Measurement::SensorIdArray sensIdArray,
                                    Measurement::SensorChannel sensorChannel,
                                    Measurement::SensorType sensorType) {
-  return StoreSensId(Measurement::CastArrayToSensId(sensIdArray),
-                     sensorChannel, sensorType);
+  return StoreSensId(Measurement::CastArrayToSensId(sensIdArray), sensorChannel,
+                     sensorType);
 }
 
 bool MeasurementPivot::UpdateValue(Measurement::SensorId sensId, float value) {
@@ -96,6 +96,15 @@ MeasurementPivot::CreateId(SensorKindType sensorAddressType) {
   return sensorId;
 }
 
+void MeasurementPivot::ResetConfigChangedFlags() {
+  ResetIter();
+  Measurement *actMeasurement = GetNextMeasurement();
+  while (actMeasurement != nullptr) {
+    actMeasurement->configChanged = false;
+    actMeasurement = GetNextMeasurement();
+  }
+}
+
 bool MeasurementPivot::UpdateConfig(SensorConfigType config) {
   Measurement *actMeasurement = FindSensIdOrEmpty(config.sensorId);
   if (actMeasurement == nullptr) {
@@ -107,7 +116,7 @@ bool MeasurementPivot::UpdateConfig(SensorConfigType config) {
   actMeasurement->relayNr = (Measurement::RelayChannel)config.relayNr;
   memcpy(actMeasurement->shortname, config.shortname,
          Measurement::SHORTNAME_LEN);
-
+  actMeasurement->configChanged = true;
   return true;
 }
 } // namespace msmnt

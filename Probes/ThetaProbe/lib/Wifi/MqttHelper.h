@@ -1,7 +1,7 @@
 #ifndef MQTTHELPER_H
 #define MQTTHELPER_H
 
-#pragma once
+//#pragma once
 
 class MqttHelper
 {

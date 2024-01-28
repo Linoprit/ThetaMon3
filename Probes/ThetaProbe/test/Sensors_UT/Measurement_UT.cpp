@@ -1,6 +1,6 @@
-#include "Config.h"
-#include "Measurement.h"
-#include "MeasurementPivot.h"
+#include <Config.h>
+#include <Sensors/Measurement.h>
+#include <Sensors/MeasurementPivot.h>
 #include <Arduino.h>
 #include <unity.h>
 #include "OsHelpers.h"

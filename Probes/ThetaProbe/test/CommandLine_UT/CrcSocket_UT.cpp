@@ -5,16 +5,14 @@
  *      Author: harald
  */
 
-#include "ComLineConfig.h"
-#include "CrcSocket.h"
 #include <Arduino.h>
+#include <CommandLine/ComLineConfig.h>
+#include <CrcSocket.h>
 #include <unity.h>
 
 #include <esp32/rom/crc.h>
 
-void printUint64(uint64_t val) { 
-  Serial.printf("%08lx\r\n", val);
-}
+void printUint64(uint64_t val) { Serial.printf("%08lx\r\n", val); }
 
 void CrcAlgorithmTest_1() {
   uint8_t data = 0xC1;

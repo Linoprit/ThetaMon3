@@ -6,7 +6,7 @@
  */
 
 #include <CrcSocket.h>
-#include <Lexer.h>
+#include "Lexer.h"
 #include <string.h>
 
 // Todo remove, if nothing to print

@@ -8,8 +8,7 @@
 #ifndef SYSTEM_COMMANDLINE_INTERPRETER_H_
 #define SYSTEM_COMMANDLINE_INTERPRETER_H_
 
-#include <Lexer.h>
-#include "ComLineConfig.h"
+#include "Lexer.h"
 
 namespace cLine {
 
@@ -23,11 +22,15 @@ public:
 	bool doit(CmdBufferType comLine);
 
 private:
+	bool printMeasures(Lexer *lex);
+	bool listDir(Lexer *lex);
+	bool readFile(Lexer *lex);
+	bool saveSensIdTable(Lexer *lex);
 	bool setSensId(Lexer *lex);
 	bool getSensIdTable(Lexer *lex);
-	bool setStationId(Lexer *lex);
+	// bool setStationId(Lexer *lex);
 	bool getStationId(Lexer *lex);
-	bool clrSensIdTable(Lexer *lex);
+	// bool clrSensIdTable(Lexer *lex);
 	bool calcHash(Lexer *lex);
 	bool shutup();
 	bool talk();

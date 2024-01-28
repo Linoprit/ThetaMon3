@@ -1,4 +1,5 @@
 #include "Sensors.h"
+#include "FileSystem/LittleFsHelpers.h"
 
 namespace msmnt {
 
@@ -20,6 +21,8 @@ void Sensors::initHardware(void) {
   _ds1820Ch1.initHardware();
   _ds1820Ch2.initHardware();
   _bme280.initHardware();
+  nvm::LittleFsHelpers::instance().readSensorIdTable();  
+  _measurementPivot.ResetConfigChangedFlags();
 }
 
 void Sensors::cycle(void) {
@@ -27,5 +30,10 @@ void Sensors::cycle(void) {
   _ds1820Ch2.cycle();
   _bme280.cycle();
 }
+
+bool Sensors::saveSensorIdTable(){
+  return nvm::LittleFsHelpers::instance().saveSensIdTable(&_measurementPivot);
+}
+
 
 } // namespace msmnt

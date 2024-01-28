@@ -42,6 +42,10 @@ constexpr uint8_t BME280_I2CADDR = 0x77; // 0x77<<1	SDO -> VCC
 //    const {return (float) _bme280_data.pressure / 100.0 / pow(1.0 - (_altitude
 //    / 44330.0), 5.255);}
 
+// ******* Filenames *******
+constexpr char idTableFile[] = "/ID_Table_U64.txt";
+
+
 // ******* MQTT *******
 #define MQTT_HOST IPAddress(192, 168, 178, 24)
 #define MQTT_PORT 1883

@@ -1,12 +1,13 @@
 #ifndef DS1820HELPER_H
 #define DS1820HELPER_H
 
-#pragma once
+//#pragma once
 
+#include <Arduino.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include <MeasurementPivot.h>
-#include <Measurement.h>
+#include "MeasurementPivot.h"
+#include "Measurement.h"
 
 namespace msmnt {
 

@@ -43,18 +43,20 @@
 
 #include <Arduino.h>
 
-#include "CommandLine.h"
+#include <CommandLine/CommandLine.h>
+#include <CommandLine/ComLineConfig.h>
 #include "Config.h"
-#include "Measurement.h"
-#include "MeasurementPivot.h"
-#include "OsHelpers.h"
+#include <FileSystem/LittleFsHelpers.h>
+#include <Sensors/Measurement.h>
+#include <Sensors/MeasurementPivot.h>
+#include <OsHelpers.h>
 #include "TasksCommon.h"
 
 // Common tasks and queues definition
 TaskHandle_t sensorTaskHandle = NULL;
-// volatile QueueHandle_t measurementQueue = NULL;
-// SemaphoreHandle_t measurementArraySmphr = NULL;
 TaskHandle_t printTaskHandle = NULL;
+//volatile QueueHandle_t keyBufferQueue = NULL;
+// SemaphoreHandle_t measurementArraySmphr = NULL;
 
 
 void setup() {
@@ -67,34 +69,43 @@ void setup() {
   pinMode(RELAY_CH1_PIN, OUTPUT);
   pinMode(RELAY_CH2_PIN, OUTPUT);
 
-
-
   cLine::CommandLine::instance().init();
   delay(500);
   cLine::CommandLine::instance().splash();
 
+  nvm::LittleFsHelpers::instance().init();
+  nvm::LittleFsHelpers::instance().initHardware();
+  
+
   // init common tasks and queues
-  xTaskCreate(startSensorsTask, "SENSOR_TASK", 2024, NULL, 1,
+  xTaskCreate(startSensorsTask, "SENSOR_TASK", 3024, NULL, 1,
               &sensorTaskHandle);
-  // measurementQueue = xQueueCreate(MAX_SENSORS,
-  // sizeof(msmnt::MeasurementType)); measurementArraySmphr =
-  // xSemaphoreCreateCounting(5, 0);
 
+  // measurementArraySmphr = xSemaphoreCreateCounting(5, 0);
 
-  xTaskCreate(startPrintTask, "PRINT_TASK", 2048, NULL, 1,
-              &printTaskHandle);
+  // print measurementPivot
+  // xTaskCreate(startPrintTask, "PRINT_TASK", 2048, NULL, 1, &printTaskHandle);
 
+  // Read file line by line
+  // littleFsTest.init();
+  // littleFsTest.listDir("/", 3);
+  // File file = LittleFS.open("/ID_Table_U64.txt");
+  // if (!file || file.isDirectory()) {
+  //   Serial.println("- failed to open file for reading");
+  //   return;
+  // }
+  // while (file.available()) {
+  //   String MySecret = file.readStringUntil('\n');
+  //   Serial.print(MySecret.c_str());
+  // }
+  // file.close();
+  //
 
-
-  // uint8_t mac[8]; // the last two bytes should stay empty
-  // OsHelpers::GetMacAddress(mac);
-  // Serial.println("MAC: ");
-  // Serial.println(msmnt::Measurement::DumpSensIdArray(mac).c_str());
 }
 
 void loop() {
 
-  // CommandLine
+  // CommandLine loop
   int incomingByte = Serial.read();
   while (incomingByte != -1) {
     cLine::CommandLine::instance().putChar(incomingByte);
@@ -102,6 +113,8 @@ void loop() {
   }
   cLine::CommandLine::instance().cycle();
 
+  //
+  //
   // digitalWrite(LED_ALIVE_PIN, 1);
   // digitalWrite(LED_CONNECTED_PIN, 1);
   // digitalWrite(RELAY_CH1_PIN, 1);
@@ -113,5 +126,5 @@ void loop() {
   // digitalWrite(RELAY_CH1_PIN, 0);
   // digitalWrite(RELAY_CH2_PIN, 0);
 
-  delay(20);
+  delay(10);
 }

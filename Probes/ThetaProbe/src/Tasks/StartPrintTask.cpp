@@ -1,5 +1,5 @@
 #include "TasksCommon.h"
-#include <Sensors.h>
+#include <Sensors/Sensors.h>
 
 void startPrintTask(void *unused_arg) {
 

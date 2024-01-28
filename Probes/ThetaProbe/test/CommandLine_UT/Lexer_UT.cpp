@@ -1,9 +1,9 @@
 //#include <Application/ThetaSensors/ID_Table.h>
-#include "Measurement.h"
+#include <Sensors/Measurement.h>
 #include <Arduino.h>
-#include <ComLineConfig.h>
-#include <Lexer.h>
-#include <Token.h>
+#include <CommandLine/ComLineConfig.h>
+#include <Interpreter/Lexer.h>
+#include <Interpreter/Token.h>
 #include <unity.h>
 
 // UInt64 0 to 18,446,744,073,709,551,615
