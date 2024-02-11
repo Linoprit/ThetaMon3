@@ -36,3 +36,5 @@
 /Probes/ThetaProbe/include/Wifi/Credentials.h
 Credentials.h
 *.pyc
+*.log*
+/Probes/ThetaProbe/data/MqttConfig.txt

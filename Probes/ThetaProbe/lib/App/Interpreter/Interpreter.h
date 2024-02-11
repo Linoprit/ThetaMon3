@@ -14,26 +14,35 @@ namespace cLine {
 
 class Interpreter {
 public:
-	Interpreter();
-	virtual ~Interpreter() {
-	}
-	;
+  Interpreter();
+  virtual ~Interpreter(){};
 
-	bool doit(CmdBufferType comLine);
+  bool doit(CmdBufferType comLine);
 
 private:
-	bool printMeasures(Lexer *lex);
-	bool listDir(Lexer *lex);
-	bool readFile(Lexer *lex);
-	bool saveSensIdTable(Lexer *lex);
-	bool setSensId(Lexer *lex);
-	bool getSensIdTable(Lexer *lex);
-	// bool setStationId(Lexer *lex);
-	bool getStationId(Lexer *lex);
-	// bool clrSensIdTable(Lexer *lex);
-	bool calcHash(Lexer *lex);
-	bool shutup();
-	bool talk();
+  bool getMacAddress();
+  bool setMqttHost(Lexer *lex);
+  bool setMqttPort(Lexer *lex);
+  bool startWifi(Lexer *lex);
+  bool stopWifi(Lexer *lex);
+  bool setMqttSpot(Lexer *lex);
+  bool getMqttConf();
+
+  bool storeWifi(Lexer *lex);
+  bool storeMqttSpot(Lexer *lex);
+  bool storeMqttHost(Lexer *lex);
+  bool storeMqttPort(Lexer *lex);
+
+  bool printMeasures(Lexer *lex);
+  bool listDir(Lexer *lex);
+  bool readFile(Lexer *lex);
+  bool saveSensIdTable(Lexer *lex);
+  bool setSensId(Lexer *lex);
+  bool getSensIdTable(Lexer *lex);
+  bool getStationId(Lexer *lex);
+  bool calcHash(Lexer *lex);
+  bool shutup();
+  bool talk();
 };
 
 } /* namespace cLine */

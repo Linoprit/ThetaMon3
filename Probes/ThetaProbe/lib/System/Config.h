@@ -45,16 +45,27 @@ constexpr uint8_t BME280_I2CADDR = 0x77; // 0x77<<1	SDO -> VCC
 // ******* Filenames *******
 constexpr char idTableFile[] = "/ID_Table_U64.txt";
 
-
 // ******* MQTT *******
-#define MQTT_HOST IPAddress(192, 168, 178, 24)
-#define MQTT_PORT 1883
-#define MQTT_PUBLISH_WERKSTATT "probes/werkstatt/sensors"
-#define MQTT_PUBLISH_LAGER "probes/lager/sensors"
-#define MQTT_PUBLISH_INNEN "probes/innen/sensors"
-#define MQTT_SUBSCRIBE_WERKSTATT "master/werkstatt/config"
-#define MQTT_SUBSCRIBE_LAGER "master/lager/config"
-#define MQTT_SUBSCRIBE_INNEN "master/innen/config"
+constexpr char mqttConfFile[] = "/MqttConfig.txt";
+constexpr char MQTT_SENS[] = "/sens";
+constexpr char MQTT_LOG[] = "/log";
+constexpr char MQTT_CMD[] = "/cmd";
+// Length of memory, allocatet for the mqtt-paths. Must hold i.e. 'werkstatt/sens'.
+// If the spotname is too long, the path will be truncated, so mqtt will not work.
+constexpr uint8_t MQTT_PATHLEN = 20;
+constexpr uint8_t WIFI_SSIDLEN = 20;
+
+// #define MQTT_HOST IPAddress(192, 168, 178, 24)
+// #define MQTT_PORT 1883
+// #define MQTT_PUB_SENS_WERKSTATT "werkstatt/sens"
+// #define MQTT_PUB_SENS_LAGER "lager/sens"
+// #define MQTT_PUB_SENS_INNEN "innen/sens"
+// #define MQTT_PUB_LOG_WERKSTATT "werkstatt/log"
+// #define MQTT_PUB_LOG_LAGER "lager/log"
+// #define MQTT_PUB_LOG_INNEN "innen/log"
+// #define MQTT_SUB_CMD_WERKSTATT "werkstatt/cmd"
+// #define MQTT_SUB_CMD_LAGER "lager/cmd"
+// #define MQTT_SUB_CMD_INNEN "innen/cmd"
 
 
 #endif /* INSTANCES_CONFIG_H_ */

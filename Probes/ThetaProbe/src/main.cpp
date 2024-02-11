@@ -52,12 +52,18 @@
 #include <OsHelpers.h>
 #include "TasksCommon.h"
 
+
+// ToDo 
+// invalid measurements, timeout + out of range
+// Relays. Check relays. Relay as sensor
+// Channels. Configure channel x off/on
+// messages to mqtt
+// mqtt to command
+
+
 // Common tasks and queues definition
 TaskHandle_t sensorTaskHandle = NULL;
 TaskHandle_t printTaskHandle = NULL;
-//volatile QueueHandle_t keyBufferQueue = NULL;
-// SemaphoreHandle_t measurementArraySmphr = NULL;
-
 
 void setup() {
   Serial.begin(115200);

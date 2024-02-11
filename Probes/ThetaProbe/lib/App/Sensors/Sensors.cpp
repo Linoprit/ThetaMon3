@@ -21,14 +21,26 @@ void Sensors::initHardware(void) {
   _ds1820Ch1.initHardware();
   _ds1820Ch2.initHardware();
   _bme280.initHardware();
-  nvm::LittleFsHelpers::instance().readSensorIdTable();  
+  
+  nvm::LittleFsHelpers::instance().readIdTable();  
   _measurementPivot.ResetConfigChangedFlags();
+
+  _mqttHelper.MqttSetup();
 }
 
 void Sensors::cycle(void) {
   _ds1820Ch1.cycle();
   _ds1820Ch2.cycle();
   _bme280.cycle();
+  _updateCount++;
+
+  // ToDo cycle through measurements an mark invalid values.
+  // ToDo in MeasuremntPivot: dont update values out of range.
+
+  if (_updateCount >= Measurement::VALUES_BUFF_LEN -1){
+    _mqttHelper.PubishMeasurements(&_measurementPivot);
+    _updateCount = 0;
+  }  
 }
 
 bool Sensors::saveSensorIdTable(){

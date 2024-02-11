@@ -1,4 +1,5 @@
 #include "CommandLine/ComLineConfig.h"
+#include "CommandLine/CommandLine.h"
 #include "LittleFsHelpers.h"
 #include "Sensors/Measurement.h"
 #include <Config.h>
@@ -20,9 +21,9 @@ void LittleFsHelpers::initHardware() {
   }
 }
 
-void LittleFsHelpers::readSensorIdTable() {
+void LittleFsHelpers::readConfigFile(const char *filename) {
   // Read file line by line
-  File file = LittleFS.open(idTableFile);
+  File file = LittleFS.open(filename);
   if (!file || file.isDirectory()) {
     Serial.println("Failed to open idTableFile.");
     return;
@@ -32,6 +33,10 @@ void LittleFsHelpers::readSensorIdTable() {
 
     for (uint_fast8_t i = 0; i < line.length(); i++) {
       uint8_t chr = (uint8_t)line.c_str()[i];
+      xQueueSendToBack(keyBufferQueue, &chr, 50);
+    }
+    if (line.c_str()[line.length() - 1] != cLine::_KEY_ENTER) {
+      uint8_t chr = cLine::_KEY_ENTER;
       xQueueSendToBack(keyBufferQueue, &chr, 50);
     }
 
@@ -58,11 +63,9 @@ bool LittleFsHelpers::saveSensIdTable(
       actMsmnt->GetConfigAsCmd(msgBuff);
 
       String message = String(msgBuff);
-      Serial.printf("\nsaving '%s'\n", message.c_str());
 
       if (file.print(message)) {
         actMsmnt->configChanged = false;
-        Serial.println("- message appended");
       } else {
         Serial.println("- append failed");
         return false;
@@ -107,32 +110,25 @@ void LittleFsHelpers::listDir(const char *dirname, uint8_t levels) {
 
 void LittleFsHelpers::createDir(const char *path) {
   Serial.printf("Creating Dir: %s\n", path);
-  if (_LittleFS.mkdir(path)) {
-    Serial.println("Dir created");
-  } else {
+  if (!_LittleFS.mkdir(path)) {   
     Serial.println("mkdir failed");
   }
 }
 
 void LittleFsHelpers::removeDir(const char *path) {
   Serial.printf("Removing Dir: %s\n", path);
-  if (_LittleFS.rmdir(path)) {
-    Serial.println("Dir removed");
-  } else {
+  if (!_LittleFS.rmdir(path)) {    
     Serial.println("rmdir failed");
   }
 }
 
 void LittleFsHelpers::readFile(const char *path) {
-  Serial.printf("Reading file: %s\r\n", path);
-
   File file = _LittleFS.open(path);
   if (!file || file.isDirectory()) {
     Serial.println("- failed to open file for reading");
     return;
   }
 
-  // Serial.println("- read from file:");
   while (file.available()) {
     Serial.write(file.read());
   }
@@ -140,32 +136,24 @@ void LittleFsHelpers::readFile(const char *path) {
 }
 
 void LittleFsHelpers::writeFile(const char *path, const char *message) {
-  Serial.printf("Writing file: %s\r\n", path);
-
   File file = _LittleFS.open(path, FILE_WRITE);
   if (!file) {
     Serial.println("- failed to open file for writing");
     return;
   }
-  if (file.print(message)) {
-    Serial.println("- file written");
-  } else {
+  if (!file.print(message)) {   
     Serial.println("- write failed");
   }
   file.close();
 }
 
 void LittleFsHelpers::appendFile(const char *path, const char *message) {
-  Serial.printf("Appending to file: %s\r\n", path);
-
   File file = _LittleFS.open(path, FILE_APPEND);
   if (!file) {
     Serial.println("- failed to open file for appending");
     return;
   }
-  if (file.print(message)) {
-    Serial.println("- message appended");
-  } else {
+  if (!file.print(message)) {   
     Serial.println("- append failed");
   }
   file.close();
@@ -173,18 +161,14 @@ void LittleFsHelpers::appendFile(const char *path, const char *message) {
 
 void LittleFsHelpers::renameFile(const char *path1, const char *path2) {
   Serial.printf("Renaming file %s to %s\r\n", path1, path2);
-  if (_LittleFS.rename(path1, path2)) {
-    Serial.println("- file renamed");
-  } else {
+  if (!_LittleFS.rename(path1, path2)) {  
     Serial.println("- rename failed");
   }
 }
 
 void LittleFsHelpers::deleteFile(const char *path) {
   Serial.printf("Deleting file: %s\r\n", path);
-  if (_LittleFS.remove(path)) {
-    Serial.println("- file deleted");
-  } else {
+  if (!_LittleFS.remove(path)) {   
     Serial.println("- delete failed");
   }
 }

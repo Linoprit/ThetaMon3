@@ -5,7 +5,7 @@
 #include "Ds1820Helper.h"
 #include "Bme280Helper.h"
 #include "MeasurementPivot.h"
-
+#include "Wifi/MqttHelper.h"
 
 namespace msmnt {
 
@@ -20,6 +20,7 @@ public:
 
   void cycle(void);
   MeasurementPivot *getMeasurementPivot() { return &_measurementPivot; };
+  wifi::MqttHelper *getMqttHelper() { return &_mqttHelper; };
   bool saveSensorIdTable();
 
 private:
@@ -27,7 +28,9 @@ private:
   Ds1820Helper _ds1820Ch1;
   Ds1820Helper _ds1820Ch2;
   Bme280Helper _bme280;
+  uint_fast8_t _updateCount;
   
+  wifi::MqttHelper _mqttHelper;
 };
 
 } // namespace msmnt

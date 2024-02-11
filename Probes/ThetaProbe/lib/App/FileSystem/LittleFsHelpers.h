@@ -34,8 +34,13 @@ public:
   void initHardware(void);
   static LittleFsHelpers &instance(void);
 
-  void readSensorIdTable();
+  void readConfigFile(const char *filename);
+
+  void readIdTable() { readConfigFile(idTableFile); };
   bool saveSensIdTable(msmnt::MeasurementPivot *measurementPivot);
+
+  void readMqttConf() { readConfigFile(mqttConfFile); };
+  
 
   void listDir(const char *dirname, uint8_t levels);
   void createDir(const char *path);
