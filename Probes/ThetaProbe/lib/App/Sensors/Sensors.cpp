@@ -22,10 +22,13 @@ void Sensors::initHardware(void) {
   _ds1820Ch2.initHardware();
   _bme280.initHardware();
   
+  // MqttSetup and readIdTable push commands to the interpreter-queue.
+  // Thats, why this must happen in the same task.
   nvm::LittleFsHelpers::instance().readIdTable();  
   _measurementPivot.ResetConfigChangedFlags();
 
-  _mqttHelper.MqttSetup();
+  wifi::MqttHelper::instance().init();
+  wifi::MqttHelper::instance().MqttSetup();
 }
 
 void Sensors::cycle(void) {
@@ -38,7 +41,7 @@ void Sensors::cycle(void) {
   // ToDo in MeasuremntPivot: dont update values out of range.
 
   if (_updateCount >= Measurement::VALUES_BUFF_LEN -1){
-    _mqttHelper.PubishMeasurements(&_measurementPivot);
+    wifi::MqttHelper::instance().PubishMeasurements(&_measurementPivot);
     _updateCount = 0;
   }  
 }

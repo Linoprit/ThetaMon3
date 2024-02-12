@@ -43,27 +43,28 @@
 
 #include <Arduino.h>
 
-#include <CommandLine/CommandLine.h>
-#include <CommandLine/ComLineConfig.h>
 #include "Config.h"
+#include "TasksCommon.h"
+#include "Wifi/MqLog.h"
+#include <CommandLine/ComLineConfig.h>
+#include <CommandLine/CommandLine.h>
 #include <FileSystem/LittleFsHelpers.h>
+#include <OsHelpers.h>
 #include <Sensors/Measurement.h>
 #include <Sensors/MeasurementPivot.h>
-#include <OsHelpers.h>
-#include "TasksCommon.h"
+#include <Wifi/MqttHelper.h>
 
-
-// ToDo 
+// ToDo
 // invalid measurements, timeout + out of range
 // Relays. Check relays. Relay as sensor
 // Channels. Configure channel x off/on
 // messages to mqtt
 // mqtt to command
 
-
 // Common tasks and queues definition
 TaskHandle_t sensorTaskHandle = NULL;
 TaskHandle_t printTaskHandle = NULL;
+SemaphoreHandle_t mqBuffSemHandle = NULL;
 
 void setup() {
   Serial.begin(115200);
@@ -81,11 +82,16 @@ void setup() {
 
   nvm::LittleFsHelpers::instance().init();
   nvm::LittleFsHelpers::instance().initHardware();
-  
 
-  // init common tasks and queues
+  // Init sensor task. The sensor init also inits Wifi and Mqtt
+  // Because we push commands to the interpreter-queue, this must happen
+  // in sequence.
   xTaskCreate(startSensorsTask, "SENSOR_TASK", 3024, NULL, 1,
               &sensorTaskHandle);
+
+  // used in MqLog
+  mqBuffSemHandle = xSemaphoreCreateBinary();
+  xSemaphoreGive(mqBuffSemHandle);
 
   // measurementArraySmphr = xSemaphoreCreateCounting(5, 0);
 
@@ -106,10 +112,10 @@ void setup() {
   // }
   // file.close();
   //
-
 }
 
 void loop() {
+  static uint_fast8_t mqLogCycleCount = 0;
 
   // CommandLine loop
   int incomingByte = Serial.read();
@@ -118,6 +124,12 @@ void loop() {
     incomingByte = Serial.read();
   }
   cLine::CommandLine::instance().cycle();
+
+  mqLogCycleCount++;
+  if (mqLogCycleCount > 3) {
+    MqLogCycle();
+    mqLogCycleCount = 0;
+  }
 
   //
   //

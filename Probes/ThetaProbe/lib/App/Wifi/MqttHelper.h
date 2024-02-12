@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include <Config.h>
 #include <IPAddress.h>
-#include <OsHelpers.h>
+#include <WiFi.h>
 #include <string>
 
 namespace wifi {
@@ -16,6 +16,8 @@ public:
   MqttHelper();
   virtual ~MqttHelper(){};
 
+  void init(void);
+  static MqttHelper &instance(void);
   void MqttSetup();
 
   void setMqttHost(IPAddress ipAddress) { _mqttHost = ipAddress; };
@@ -34,14 +36,17 @@ public:
   void stopWifi() { WiFi.disconnect(); }
 
   void PubishMeasurements(msmnt::MeasurementPivot *measurementPivot);
+  int PublishLog(uint8_t *message, uint16_t size);
+  int PublishLog(std::string message);
   void printMqttConf();
+
+  char *_mqttSubCmd;
 
 private:
   IPAddress _mqttHost;
   uint16_t _mqttPort;
   char *_mqttPubSens;
   char *_mqttPubLog;
-  char *_mqttSubCmd;
 
   void copyMqttPath(char *buffer, std::string spot, const char *mqttSuffix,
                     size_t mqttLen) {

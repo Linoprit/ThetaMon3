@@ -11,8 +11,8 @@
 
 #include "CommandLine/CommandLine.h"
 #include "Interpreter/Interpreter.h"
-#include "Wifi/MqttHelper.h"
 #include "Sensors/Measurement.h"
+#include "Wifi/MqttHelper.h"
 #include <CommandLine/ComLineConfig.h>
 #include <CrcSocket.h>
 #include <FileSystem/LittleFsHelpers.h>
@@ -135,21 +135,21 @@ bool Interpreter::storeMqttHost(Lexer *lex) {
   return true;
 }
 
-bool Interpreter::storeMqttPort(Lexer *lex) { 
+bool Interpreter::storeMqttPort(Lexer *lex) {
   UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
   if (intToken->getType() != Token::UInt64) {
     Serial.printf("\nUsage: storeMqttPort <int>.");
     return false;
   }
-  uint16_t port = (uint16_t) intToken->getVal();
+  uint16_t port = (uint16_t)intToken->getVal();
 
   char buff[64];
   sprintf(buff, "setMqttPort %lu \r\n", port);
 
   nvm::LittleFsHelpers::instance().appendFile(mqttConfFile, buff);
 
-  return true; 
-  }
+  return true;
+}
 
 bool Interpreter::setMqttHost(Lexer *lex) {
   IPAddress hostAddress;
@@ -164,9 +164,7 @@ bool Interpreter::setMqttHost(Lexer *lex) {
     hostAddress[i] = (uint8_t)intToken->getVal();
   }
 
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->setMqttHost(hostAddress);
-
+  wifi::MqttHelper::instance().setMqttHost(hostAddress);
   return true;
 }
 
@@ -180,8 +178,7 @@ bool Interpreter::setMqttPort(Lexer *lex) {
   }
   port = (uint16_t)intToken->getVal();
 
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->setMqttPort(port);
+  wifi::MqttHelper::instance().setMqttPort(port);
   return true;
 }
 
@@ -210,21 +207,16 @@ bool Interpreter::startWifi(Lexer *lex) {
   }
   std::string pass = chrToken->getVal();
 
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->startWifi(ssid, pass);
-
+  wifi::MqttHelper::instance().startWifi(ssid, pass);
   return true;
 }
 bool Interpreter::stopWifi(Lexer *lex) {
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->stopWifi();
-
+  wifi::MqttHelper::instance().stopWifi();
   return true;
 }
 
-bool Interpreter::getMqttConf() {
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->printMqttConf();
+bool Interpreter::getMqttConf() {  
+  wifi::MqttHelper::instance().printMqttConf();
   return true;
 }
 
@@ -235,9 +227,7 @@ bool Interpreter::setMqttSpot(Lexer *lex) {
     return false;
   }
 
-  wifi::MqttHelper *mqttHelper = msmnt::Sensors::instance().getMqttHelper();
-  mqttHelper->setMqttSpot(chrToken->getVal());
-
+  wifi::MqttHelper::instance().setMqttSpot(chrToken->getVal());
   return true;
 }
 
