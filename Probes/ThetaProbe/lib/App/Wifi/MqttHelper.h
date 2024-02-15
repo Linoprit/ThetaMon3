@@ -35,10 +35,12 @@ public:
   }
   void stopWifi() { WiFi.disconnect(); }
 
-  void PubishMeasurements(msmnt::MeasurementPivot *measurementPivot);
-  int PublishLog(uint8_t *message, uint16_t size);
-  int PublishLog(std::string message);
+  void pubishMeasurements(msmnt::MeasurementPivot *measurementPivot);
+  int publishLog(uint8_t *message, uint16_t size);
+  int publishLog(std::string message);
   void printMqttConf();
+  void stopSerialPrint() { _DoSerialPrint = false; }
+  void startSerialPrint() { _DoSerialPrint = true; }
 
   char *_mqttSubCmd;
 
@@ -47,6 +49,7 @@ private:
   uint16_t _mqttPort;
   char *_mqttPubSens;
   char *_mqttPubLog;
+  bool _DoSerialPrint;
 
   void copyMqttPath(char *buffer, std::string spot, const char *mqttSuffix,
                     size_t mqttLen) {

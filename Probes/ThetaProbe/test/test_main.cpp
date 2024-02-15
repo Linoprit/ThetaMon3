@@ -1,55 +1,19 @@
 #include "CommandLine_UT/CrcSocket_UT.cpp"
 #include "CommandLine_UT/Lexer_UT.cpp"
 #include "Config.h"
+#include "DigitalIo_UT/CheckRelays_UT.cpp"
+#include "DigitalIo_UT/DigitalIo_UT.cpp"
 #include "Sensors_UT/Measurement_UT.cpp"
-#include "Wifi/Credentials.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <unity.h>
 
 // To get printed output, run with: pio test -v
 
-void setUp(void) {
-  // set stuff up here
+void setUp(void) { // setup stuff
 }
 
-void tearDown(void) {
-  // clean stuff up here
-}
-
-void test_gpios(void) {
-  TEST_ASSERT_EQUAL(4, LED_ALIVE_PIN);
-  TEST_ASSERT_EQUAL(2, LED_CONNECTED_PIN);
-  TEST_ASSERT_EQUAL(27, RELAY_CH1_PIN);
-  TEST_ASSERT_EQUAL(12, RELAY_CH2_PIN);
-
-  digitalWrite(LED_ALIVE_PIN, HIGH);
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(LED_ALIVE_PIN));
-  delay(500);
-  digitalWrite(LED_ALIVE_PIN, LOW);
-  TEST_ASSERT_EQUAL(LOW, digitalRead(LED_ALIVE_PIN));
-  delay(500);
-
-  digitalWrite(LED_CONNECTED_PIN, HIGH);
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(LED_CONNECTED_PIN));
-  delay(500);
-  digitalWrite(LED_CONNECTED_PIN, LOW);
-  TEST_ASSERT_EQUAL(LOW, digitalRead(LED_CONNECTED_PIN));
-  delay(500);
-
-  digitalWrite(RELAY_CH1_PIN, HIGH);
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
-  delay(500);
-  digitalWrite(RELAY_CH1_PIN, LOW);
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
-  delay(500);
-
-  digitalWrite(RELAY_CH2_PIN, HIGH);
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
-  delay(500);
-  digitalWrite(RELAY_CH2_PIN, LOW);
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
-  delay(500);
+void tearDown(void) { // clean stuff
 }
 
 void setup() {
@@ -58,23 +22,13 @@ void setup() {
   delay(2000);
 
   Serial.begin(115200);
-  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  // TODO move this to a kind of GPIO_Init
-  pinMode(LED_ALIVE_PIN, OUTPUT);
-  pinMode(LED_CONNECTED_PIN, OUTPUT);
-  pinMode(RELAY_CH1_PIN, OUTPUT);
-  pinMode(RELAY_CH2_PIN, OUTPUT);
 
   UNITY_BEGIN(); // IMPORTANT LINE!
-  // RUN_TEST(test_gpios);
 }
 
 void loop() {
-  RUN_TEST(test_gpios);
-  // delay(500);
-
   RUN_TEST(Measurement_UT);
+  RUN_TEST(OutOfRanges_UT);
   RUN_TEST(MeasurementPivot_UT);
   RUN_TEST(MeasurementPivotUpdateValue_UT);
 
@@ -105,6 +59,9 @@ void loop() {
   RUN_TEST(CopyToShortname_UT);
   RUN_TEST(LexerCommandLine);
   RUN_TEST(LexerPrintCmdHashes);
+
+  RUN_TEST(DigitalIo_UT);
+  RUN_TEST(CalcRelayStates_UT);
 
   UNITY_END(); // stop unit testing
 }

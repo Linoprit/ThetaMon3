@@ -24,7 +24,7 @@ public:
     BME_PRESS_77 = 6,
 
     RELAY_01 = 10,
-    RELAY_02 = 1,
+    RELAY_02 = 11,
   };
 
   MeasurementPivot(){};

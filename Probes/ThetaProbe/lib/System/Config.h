@@ -53,19 +53,6 @@ constexpr char MQTT_CMD[] = "/cmd";
 // Length of memory, allocatet for the mqtt-paths. Must hold i.e. 'werkstatt/sens'.
 // If the spotname is too long, the path will be truncated, so mqtt will not work.
 constexpr uint8_t MQTT_PATHLEN = 20;
-constexpr uint8_t WIFI_SSIDLEN = 20;
-
-// #define MQTT_HOST IPAddress(192, 168, 178, 24)
-// #define MQTT_PORT 1883
-// #define MQTT_PUB_SENS_WERKSTATT "werkstatt/sens"
-// #define MQTT_PUB_SENS_LAGER "lager/sens"
-// #define MQTT_PUB_SENS_INNEN "innen/sens"
-// #define MQTT_PUB_LOG_WERKSTATT "werkstatt/log"
-// #define MQTT_PUB_LOG_LAGER "lager/log"
-// #define MQTT_PUB_LOG_INNEN "innen/log"
-// #define MQTT_SUB_CMD_WERKSTATT "werkstatt/cmd"
-// #define MQTT_SUB_CMD_LAGER "lager/cmd"
-// #define MQTT_SUB_CMD_INNEN "innen/cmd"
-
+//constexpr uint8_t WIFI_SSIDLEN = 20;
 
 #endif /* INSTANCES_CONFIG_H_ */

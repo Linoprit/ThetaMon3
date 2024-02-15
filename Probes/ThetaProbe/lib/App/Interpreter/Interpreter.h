@@ -33,6 +33,8 @@ private:
   bool storeMqttHost(Lexer *lex);
   bool storeMqttPort(Lexer *lex);
 
+  bool tstRelay(Lexer *lex);
+
   bool printMeasures(Lexer *lex);
   bool listDir(Lexer *lex);
   bool readFile(Lexer *lex);

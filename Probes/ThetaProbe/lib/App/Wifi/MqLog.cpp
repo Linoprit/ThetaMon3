@@ -25,7 +25,7 @@ int MqLogCycle(void) {
     if (xSemaphoreTake(mqBuffSemHandle, 10) != pdTRUE) {
       return _FAIL_;
     }
-    result = wifi::MqttHelper::instance().PublishLog(&txBuff[0], tx_act_pos);    
+    result = wifi::MqttHelper::instance().publishLog(&txBuff[0], tx_act_pos);    
     xSemaphoreGive(mqBuffSemHandle);
 
     // buffer is in transmission, we must not clear it!

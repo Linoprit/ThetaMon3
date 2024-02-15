@@ -1,5 +1,7 @@
 #include "Sensors.h"
 #include "FileSystem/LittleFsHelpers.h"
+#include <DigitalIo/GpioInOut.h>
+
 
 namespace msmnt {
 
@@ -15,7 +17,8 @@ Sensors::Sensors()
                  &_measurementPivot),
       _ds1820Ch2(Measurement::CH_2, ONE_WIRE_CH2_PIN, DS18B20_PRECISION,
                  &_measurementPivot),
-      _bme280(Measurement::I2C_1, &_measurementPivot) {}
+      _bme280(Measurement::I2C_1, &_measurementPivot),
+      _relays(&_measurementPivot) {}
 
 void Sensors::initHardware(void) {
   _ds1820Ch1.initHardware();
@@ -35,13 +38,13 @@ void Sensors::cycle(void) {
   _ds1820Ch1.cycle();
   _ds1820Ch2.cycle();
   _bme280.cycle();
-  _updateCount++;
+  _relays.cycle();  
 
   // ToDo cycle through measurements an mark invalid values.
-  // ToDo in MeasuremntPivot: dont update values out of range.
 
+  _updateCount++;
   if (_updateCount >= Measurement::VALUES_BUFF_LEN -1){
-    wifi::MqttHelper::instance().PubishMeasurements(&_measurementPivot);
+    wifi::MqttHelper::instance().pubishMeasurements(&_measurementPivot);
     _updateCount = 0;
   }  
 }

@@ -5,16 +5,13 @@
  *      Author: harald
  */
 
-// #include <Application/Sensors/SensorIdTable.h>
-// #include <Application/Sensors/Sensors.h>
-// #include <Application/Radio/RadioSlave.h>
-
 #include "CommandLine/CommandLine.h"
 #include "Interpreter/Interpreter.h"
 #include "Sensors/Measurement.h"
 #include "Wifi/MqttHelper.h"
 #include <CommandLine/ComLineConfig.h>
 #include <CrcSocket.h>
+#include <DigitalIo/GpioInOut.h>
 #include <FileSystem/LittleFsHelpers.h>
 #include <IPAddress.h>
 #include <OsHelpers.h>
@@ -60,6 +57,8 @@ bool Interpreter::doit(CmdBufferType comLine) {
   else if (cmd == 3509612507)  {    result = storeMqttHost(&lex);   } // storeMqttHost
   else if (cmd == 3851424486)  {    result = storeMqttPort(&lex);   } // storeMqttPort
 
+  else if (cmd == 2066544999)  {    result = tstRelay(&lex);       } // tstRelay
+
   else if (cmd == 959926194) 	{    result = shutup();  							} // shutup
   else if (cmd == 1639364146) {    result = talk();  								} // talk
   else if (cmd == 1676458703) {		 Serial.println();	
@@ -74,6 +73,11 @@ bool Interpreter::doit(CmdBufferType comLine) {
   // setSensId example
   // cmd       ID (hash)	min   max  	type  rel  shortname (8 bytes)
   // setSensId 3822322055 10.0  12.5  0   	1    "Test 007"
+
+  // TODO
+  // setCh1 on / off ; Ch2 I2c RelayChannel
+  // getCh1 ...
+  // tstRelay1 on / off
 
   return result;
 }
@@ -151,6 +155,33 @@ bool Interpreter::storeMqttPort(Lexer *lex) {
   return true;
 }
 
+bool Interpreter::tstRelay(Lexer *lex) {
+  bool isError = false;
+  UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
+  if (intToken->getType() != Token::UInt64) {
+    isError = true;
+  }
+  uint16_t relayNr = (uint16_t)intToken->getVal();
+
+  intToken = (UInt64Token *)lex->getNextToken();
+  if (intToken->getType() != Token::UInt64) {
+    isError = true;
+  }
+  uint16_t onOrOff = (uint16_t)intToken->getVal();
+
+  if ((relayNr < 1) || (relayNr > 2) || (onOrOff > 1)) {
+    isError = true;
+  }
+
+  if (isError) {
+    Serial.printf("\nUsage: tstRelay1 <int RelayNr> <int on/off>.");
+    return false;
+  } else {
+    gpio::GpioInOut::instance().tstRelay(relayNr, static_cast<bool>(onOrOff));
+  }
+  return true;
+}
+
 bool Interpreter::setMqttHost(Lexer *lex) {
   IPAddress hostAddress;
 
@@ -215,7 +246,7 @@ bool Interpreter::stopWifi(Lexer *lex) {
   return true;
 }
 
-bool Interpreter::getMqttConf() {  
+bool Interpreter::getMqttConf() {
   wifi::MqttHelper::instance().printMqttConf();
   return true;
 }
@@ -232,24 +263,14 @@ bool Interpreter::setMqttSpot(Lexer *lex) {
 }
 
 bool Interpreter::shutup() {
-  // bool isMaster =
-  // 		snsrs::Sensors::instance().getNonVolatileData()->getStationType()
-  // 				== snsrs::SensorIdTable::MASTER;
-  // if (isMaster) {
-  // 	radio::RadioMaster::instance().setShutup(true);
-  // }
-  Serial.println("\nDoing 'shutup'");
+  wifi::MqttHelper::instance().stopSerialPrint();
+  Serial.println("\nSerial print is inhibited.");
   return true;
 }
 
 bool Interpreter::talk() {
-  // bool isMaster =
-  // 		snsrs::Sensors::instance().getNonVolatileData()->getStationType()
-  // 				== snsrs::SensorIdTable::MASTER;
-  // if (isMaster) {
-  // 	radio::RadioMaster::instance().setShutup(false);
-  // }
-  Serial.println("\nDoing 'talk'");
+  wifi::MqttHelper::instance().startSerialPrint();
+  Serial.println("\nSerial print is active.");
   return true;
 }
 
@@ -258,7 +279,7 @@ bool Interpreter::printMeasures(Lexer *lex) {
       msmnt::Sensors::instance().getMeasurementPivot();
 
   if (measurementPivot == nullptr) {
-    Serial.println("measurementPivot is null.");
+    Serial.println("\nmeasurementPivot is null.");
     return false;
   } else {
     Serial.println();
@@ -289,13 +310,6 @@ bool Interpreter::saveSensIdTable(Lexer *lex) {
   return msmnt::Sensors::instance().saveSensorIdTable();
 }
 
-// bool Interpreter::clrSensIdTable(Lexer *lex) {
-//   // snsrs::Sensors::instance().getNonVolatileData()->clrIdTableData();
-//   // tx_printf("\nID-Table cleared.\n");
-//   Serial.println("\nDoing 'clrSensIdTable'");
-//   return true;
-// }
-
 bool Interpreter::calcHash(Lexer *lex) {
   CmdToken *cmdToken = (CmdToken *)lex->getNextToken();
   if (cmdToken->getType() != Token::Command) {
@@ -306,18 +320,6 @@ bool Interpreter::calcHash(Lexer *lex) {
 
   return true;
 }
-
-// bool Interpreter::setStationId(Lexer *lex) {
-
-//   UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
-//   if (intToken->getType() != Token::UInt64) {
-//     return false;
-//   }
-//   // snsrs::Sensors::instance().getNonVolatileData()->writeStatId(
-//   // 		intToken->getVal());
-//   Serial.printf("\nsetStationId %lu\n", intToken->getVal());
-//   return true;
-// }
 
 bool Interpreter::getSensIdTable(Lexer *lex) {
   nvm::LittleFsHelpers::instance().readFile(idTableFile);

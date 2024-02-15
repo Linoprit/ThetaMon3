@@ -6,6 +6,7 @@
 #include "Bme280Helper.h"
 #include "MeasurementPivot.h"
 #include "Wifi/MqttHelper.h"
+#include "RelayHelper.h"
 
 namespace msmnt {
 
@@ -32,6 +33,7 @@ private:
   Ds1820Helper _ds1820Ch1;
   Ds1820Helper _ds1820Ch2;
   Bme280Helper _bme280;
+  RelayHelper _relays;
   uint_fast8_t _updateCount;
   
   //wifi::MqttHelper _mqttHelper;

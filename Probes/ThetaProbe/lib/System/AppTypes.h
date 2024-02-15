@@ -13,4 +13,7 @@
 constexpr int _SUCCESS_ = 0;
 constexpr int _FAIL_ = -1;
 
+constexpr bool _on_ = true;
+constexpr bool _off_ = false;
+
 #endif /* FRAMEWORK_TYPES_APPTYPES_H_ */

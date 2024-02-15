@@ -53,13 +53,14 @@
 #include <Sensors/Measurement.h>
 #include <Sensors/MeasurementPivot.h>
 #include <Wifi/MqttHelper.h>
+#include <DigitalIo/GpioInOut.h>
+
 
 // ToDo
-// invalid measurements, timeout + out of range
-// Relays. Check relays. Relay as sensor
 // Channels. Configure channel x off/on
-// messages to mqtt
-// mqtt to command
+// ToDo cycle through measurements an mark invalid values.
+// Change Serial.print* to MqLog
+
 
 // Common tasks and queues definition
 TaskHandle_t sensorTaskHandle = NULL;
@@ -70,11 +71,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println();
 
-  // Todo move to gpio_init
-  pinMode(LED_ALIVE_PIN, OUTPUT);
-  pinMode(LED_CONNECTED_PIN, OUTPUT);
-  pinMode(RELAY_CH1_PIN, OUTPUT);
-  pinMode(RELAY_CH2_PIN, OUTPUT);
+  gpio::GpioInOut::instance().init();
+  gpio::GpioInOut::instance().initHardware();
 
   cLine::CommandLine::instance().init();
   delay(500);
@@ -92,30 +90,11 @@ void setup() {
   // used in MqLog
   mqBuffSemHandle = xSemaphoreCreateBinary();
   xSemaphoreGive(mqBuffSemHandle);
-
-  // measurementArraySmphr = xSemaphoreCreateCounting(5, 0);
-
-  // print measurementPivot
-  // xTaskCreate(startPrintTask, "PRINT_TASK", 2048, NULL, 1, &printTaskHandle);
-
-  // Read file line by line
-  // littleFsTest.init();
-  // littleFsTest.listDir("/", 3);
-  // File file = LittleFS.open("/ID_Table_U64.txt");
-  // if (!file || file.isDirectory()) {
-  //   Serial.println("- failed to open file for reading");
-  //   return;
-  // }
-  // while (file.available()) {
-  //   String MySecret = file.readStringUntil('\n');
-  //   Serial.print(MySecret.c_str());
-  // }
-  // file.close();
-  //
 }
 
 void loop() {
   static uint_fast8_t mqLogCycleCount = 0;
+  static uint_fast8_t aliveLedCycleCount = 0;
 
   // CommandLine loop
   int incomingByte = Serial.read();
@@ -131,18 +110,11 @@ void loop() {
     mqLogCycleCount = 0;
   }
 
-  //
-  //
-  // digitalWrite(LED_ALIVE_PIN, 1);
-  // digitalWrite(LED_CONNECTED_PIN, 1);
-  // digitalWrite(RELAY_CH1_PIN, 1);
-  // digitalWrite(RELAY_CH2_PIN, 1);
-  // delay(1000);
-
-  // digitalWrite(LED_ALIVE_PIN, 0);
-  // digitalWrite(LED_CONNECTED_PIN, 0);
-  // digitalWrite(RELAY_CH1_PIN, 0);
-  // digitalWrite(RELAY_CH2_PIN, 0);
+  aliveLedCycleCount++;
+  if (aliveLedCycleCount > 100){
+    aliveLedCycleCount = 0;
+    gpio::GpioInOut::instance().tglLedAlive();
+  }
 
   delay(10);
 }

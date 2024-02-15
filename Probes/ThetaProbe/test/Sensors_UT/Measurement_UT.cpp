@@ -1,9 +1,9 @@
+#include "OsHelpers.h"
+#include <Arduino.h>
 #include <Config.h>
 #include <Sensors/Measurement.h>
 #include <Sensors/MeasurementPivot.h>
-#include <Arduino.h>
 #include <unity.h>
-#include "OsHelpers.h"
 
 using namespace msmnt;
 
@@ -22,6 +22,12 @@ void Measurement_UT() {
   TEST_ASSERT_EQUAL_FLOAT(2.00f, msmnt.GetMeanValue());
 
   msmnt.UpdateValue(4.0f);
+  TEST_ASSERT_EQUAL_FLOAT(2.50f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(-56.0f);
+  TEST_ASSERT_EQUAL_FLOAT(2.50f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(56.0f);
   TEST_ASSERT_EQUAL_FLOAT(2.50f, msmnt.GetMeanValue());
 
   msmnt.UpdateValue(5.0f);
@@ -52,6 +58,35 @@ void Measurement_UT() {
   uint8_t sensIdArrayOther[] = {0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x80};
   TEST_ASSERT_FALSE(
       msmnt::Measurement::CompareSensorId(sensIdArray, sensIdArrayOther));
+}
+
+void OutOfRanges_UT() {
+  msmnt::Measurement msmnt;
+  uint_fast8_t i = 0;
+
+  msmnt.sensType = msmnt::Measurement::SensorType::PRESS;
+  for (i = 0; i < msmnt::Measurement::VALUES_BUFF_LEN; i++) {
+    msmnt.UpdateValue(600.0f);
+  }
+  TEST_ASSERT_EQUAL_FLOAT(600.00f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(400.0f);
+  TEST_ASSERT_EQUAL_FLOAT(600.00f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(1200.0f);
+  TEST_ASSERT_EQUAL_FLOAT(600.00f, msmnt.GetMeanValue());
+
+  msmnt.sensType = msmnt::Measurement::SensorType::HUMIDITY;
+  for (i = 0; i < msmnt::Measurement::VALUES_BUFF_LEN; i++) {
+    msmnt.UpdateValue(60.0f);
+  }
+  TEST_ASSERT_EQUAL_FLOAT(60.00f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(4.0f);
+  TEST_ASSERT_EQUAL_FLOAT(60.00f, msmnt.GetMeanValue());
+
+  msmnt.UpdateValue(100.0f);
+  TEST_ASSERT_EQUAL_FLOAT(60.00f, msmnt.GetMeanValue());
 }
 
 void MeasurementPivot_UT() {
@@ -128,11 +163,11 @@ void MeasurementPivotUpdateConfig_UT() {
 }
 
 void MeasurementPivotCreateId_UT() {
-  Measurement::SensorId sensId = 
-    MeasurementPivot::CreateId(MeasurementPivot::SensorKindType::BME_PRESS_76);
+  Measurement::SensorId sensId = MeasurementPivot::CreateId(
+      MeasurementPivot::SensorKindType::BME_PRESS_76);
 
-  uint8_t* maskedIdPtr = (uint8_t*) &sensId;
-  //Serial.println(maskedIdPtr[7]);
+  uint8_t *maskedIdPtr = (uint8_t *)&sensId;
+  // Serial.println(maskedIdPtr[7]);
   TEST_ASSERT_EQUAL(3, maskedIdPtr[7]);
 
   msmnt::Measurement::SensorId macMask = 0x00FFFFFFFFFFFFFF; // little endian
@@ -140,6 +175,6 @@ void MeasurementPivotCreateId_UT() {
   uint64_t macSensId = 0;
   uint8_t *mac = (uint8_t *)&macSensId; // the last two bytes should stay empty
   OsHelpers::GetMacAddress(mac);
-  //Serial.println(Measurement::DumpSensId(macSensId).c_str());
+  // Serial.println(Measurement::DumpSensId(macSensId).c_str());
   TEST_ASSERT_EQUAL(macSensId, macMaskedId);
 }

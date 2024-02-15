@@ -1,12 +1,13 @@
 #include "CommandLine/CommandLine.h"
 #include "MqttHelper.h"
 #include "Sensors/Sensors.h"
+#include "Wifi/MqLog.h"
 #include <AppTypes.h>
 #include <Arduino.h>
 #include <AsyncMqttClient.h>
+#include <DigitalIo/GpioInOut.h>
 #include <FileSystem/LittleFsHelpers.h>
 #include <WiFi.h>
-#include "Wifi/MqLog.h"
 
 namespace wifi {
 
@@ -48,6 +49,8 @@ void onMqttConnect(bool sessionPresent) {
 
   Serial.printf("Subscribing to '%s', got ID %lu\n",
                 wifi::MqttHelper::instance()._mqttSubCmd, result);
+
+  gpio::GpioInOut::instance().setLedConnected();
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -55,6 +58,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   if (WiFi.isConnected()) {
     xTimerStart(mqttReconnectTimer, 0);
   }
+  gpio::GpioInOut::instance().clrLedConnected();
 }
 
 void onMqttPublish(uint16_t packetId) {
@@ -70,22 +74,6 @@ void connectToWifi() {
 void onMqttMessage(char *topic, char *payload,
                    AsyncMqttClientMessageProperties properties, size_t len,
                    size_t index, size_t total) {
-  // Serial.println("Publish received.");
-  // Serial.print("  topic: ");
-  // Serial.println(topic);
-  // Serial.print("  qos: ");
-  // Serial.println(properties.qos);
-  // Serial.print("  dup: ");
-  // Serial.println(properties.dup);
-  // Serial.print("  retain: ");
-  // Serial.println(properties.retain);
-  // Serial.print("  len: ");
-  // Serial.println(len);
-  // Serial.print("  index: ");
-  // Serial.println(index);
-  // Serial.print("  total: ");
-  // Serial.println(total);
-  // Serial.printf("Message: '%s'\n", payload);
 
   for (uint_fast8_t i = 0; i < total; i++) {
     xQueueSendToBack(keyBufferQueue, &payload[i], 50);
@@ -144,22 +132,22 @@ void MqttHelper::MqttSetup() {
 void MqttHelper::printMqttConf() {
   int result;
 
-  if (WiFi.status() == WL_CONNECTED) {    
-    result = MqLog("\nWIFI is connected, local IP: %i.%i.%i.%i\n",
-                  WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2],
-                  WiFi.localIP()[3]);
+  if (WiFi.status() == WL_CONNECTED) {
+    result =
+        MqLog("\nWIFI is connected, local IP: %i.%i.%i.%i\n", WiFi.localIP()[0],
+              WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
 
   } else {
     result = MqLog("\nWifi is not  connected.\n");
   }
-  MqLog("MqttHost: %i.%i.%i.%i:%lu\n", _mqttHost[0], _mqttHost[1],
-                _mqttHost[2], _mqttHost[3], _mqttPort);
+  MqLog("MqttHost: %i.%i.%i.%i:%lu\n", _mqttHost[0], _mqttHost[1], _mqttHost[2],
+        _mqttHost[3], _mqttPort);
   MqLog("Mqtt publish sensordata: '%s'\n", _mqttPubSens);
   MqLog("Mqtt publish logs: '%s'\n", _mqttPubLog);
   MqLog("Mqtt subscribe commands: '%s'\n", _mqttSubCmd);
 }
 
-void MqttHelper::PubishMeasurements(MeasurementPivot *measurementPivot) {
+void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
 
   // uint64: 20, float: 6, spaces: 1, EOL: 1
   char buff[30];
@@ -179,9 +167,13 @@ void MqttHelper::PubishMeasurements(MeasurementPivot *measurementPivot) {
   }
 }
 
-int MqttHelper::PublishLog(uint8_t *message, uint16_t size) {
+int MqttHelper::publishLog(uint8_t *message, uint16_t size) {
   message[size] = '\0';
-  Serial.printf((char *)message);
+
+  if (_DoSerialPrint) {
+    Serial.printf((char *)message);
+  }
+
   uint16_t packetIdPub1 =
       mqttClient.publish(_mqttPubLog, 1, true, (char *)message);
   if (packetIdPub1 == 0) {
@@ -190,8 +182,8 @@ int MqttHelper::PublishLog(uint8_t *message, uint16_t size) {
   return _SUCCESS_;
 }
 
-int MqttHelper::PublishLog(std::string message) {
-  return PublishLog((uint8_t *)message.c_str(), message.length());
+int MqttHelper::publishLog(std::string message) {
+  return publishLog((uint8_t *)message.c_str(), message.length());
 }
 
 } // namespace wifi

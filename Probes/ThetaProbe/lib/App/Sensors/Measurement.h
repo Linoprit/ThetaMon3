@@ -26,6 +26,13 @@ public:
   static constexpr uint16_t VALUES_BUFF_LEN = 5;
   static constexpr uint64_t INVALID_SENS_ID =
       std::numeric_limits<uint64_t>::max();
+  static constexpr float TEMP_INVAL_MIN = -55.0f;
+  static constexpr float TEMP_INVAL_MAX = 50.0f;
+  static constexpr float HUM_INVAL_MIN = 5.0f;
+  static constexpr float HUM_INVAL_MAX = 99.0f;
+  static constexpr float PRS_INVAL_MIN = 500.0f;
+  static constexpr float PRS_INVAL_MAX = 1100.0f;
+
   typedef uint8_t
       SensorIdArray[SENS_ID_LEN]; // same as DallasTemperature::DeviceAddress
   typedef uint64_t SensorId;      // SensorIdArray casted to Integer
@@ -35,6 +42,7 @@ public:
     HUMIDITY = 1,
     PRESS = 2,
     RELAY = 3,
+
   };
   enum RelayChannel {
     RL_NONE = 0,
@@ -68,6 +76,10 @@ public:
   virtual ~Measurement() {}
 
   void UpdateValue(float value) {
+    if (!isInRange(value)) {
+      return;
+    }
+
     values[valueIndex] = value;
     IncrementValueIdx();
 
@@ -83,6 +95,34 @@ public:
     if (count > 0.0) {
       meanValue = sum / count;
     }
+  }
+
+  bool isInRange(float value) {
+    switch (sensType) {
+    case SensorType::TEMP:
+      if ((value < TEMP_INVAL_MIN) || (value > TEMP_INVAL_MAX)) {
+        return false;
+      }
+      break;
+    case SensorType::HUMIDITY:
+      if ((value < HUM_INVAL_MIN) || (value > HUM_INVAL_MAX)) {
+        return false;
+      }
+      break;
+    case SensorType::PRESS:
+      if ((value < PRS_INVAL_MIN) || (value > PRS_INVAL_MAX)) {
+        return false;
+      }
+      break;
+    case SensorType::RELAY:
+      if ((value < 0.0) || (value > 1.0)) {
+        return false;
+      }
+      break;
+    default:
+      break;
+    }
+    return true;
   }
 
   // Make a clean string, the maximum length of shortname-attribute.
@@ -196,8 +236,8 @@ public:
   }
 
   void GetConfigAsCmd(char *buffer) {
-    sprintf(buffer, "setSensId %llu %.2f %.2f %i %i \"%s\"\r\n", sensorId, minVal,
-            maxVal, sensType, relayNr, GetShortname().c_str());
+    sprintf(buffer, "setSensId %llu %.2f %.2f %i %i \"%s\"\r\n", sensorId,
+            minVal, maxVal, sensType, relayNr, GetShortname().c_str());
     // setSensId 16789727009993785128 3.5 5.0 0 0 "Test 003"
   }
 
