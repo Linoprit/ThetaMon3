@@ -29,6 +29,7 @@ void setup() {
 void loop() {
   RUN_TEST(Measurement_UT);
   RUN_TEST(OutOfRanges_UT);
+  RUN_TEST(MeasurementTimeout_UT);
   RUN_TEST(MeasurementPivot_UT);
   RUN_TEST(MeasurementPivotUpdateValue_UT);
 

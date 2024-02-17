@@ -81,6 +81,7 @@ void MeasurementPivot::Dump() {
   Measurement *actMeasurement = GetNextMeasurement();
   while (actMeasurement != nullptr) {
     actMeasurement->Dump();
+    delay(30); // wait for MqLog      
     actMeasurement = GetNextMeasurement();
   }
 }

@@ -19,7 +19,7 @@ TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 
 void connectToMqtt() {
-  Serial.println("Connecting to MQTT...");
+  MqLog("Connecting to MQTT...\n");
   mqttClient.connect();
 }
 
@@ -27,12 +27,12 @@ void WiFiEvent(WiFiEvent_t event) {
   // Serial.printf("[WiFi-event] event: %d\n", event);
   switch (event) {
   case SYSTEM_EVENT_STA_GOT_IP:
-    Serial.printf("WIFI is connected, local IP: ");
-    Serial.println(WiFi.localIP());
+    MqLog("\nWIFI is connected, local IP: %i.%i.%i.%i\n", WiFi.localIP()[0],
+          WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
     connectToMqtt();
     break;
   case SYSTEM_EVENT_STA_DISCONNECTED:
-    Serial.println("WiFi lost connection");
+    MqLog("WiFi lost connection\n");
     xTimerStop(
         mqttReconnectTimer,
         0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
@@ -42,31 +42,29 @@ void WiFiEvent(WiFiEvent_t event) {
 }
 
 void onMqttConnect(bool sessionPresent) {
-  Serial.printf("Connected to MQTT. Session present: %i\n", sessionPresent);
+  MqLog("Connected to MQTT. Session present: %i\n", sessionPresent);
 
   uint16_t result =
       mqttClient.subscribe(wifi::MqttHelper::instance()._mqttSubCmd, 1);
 
-  Serial.printf("Subscribing to '%s', got ID %lu\n",
-                wifi::MqttHelper::instance()._mqttSubCmd, result);
+  MqLog("Subscribing to '%s', got ID %lu\n",
+        wifi::MqttHelper::instance()._mqttSubCmd, result);
 
   gpio::GpioInOut::instance().setLedConnected();
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println("Disconnected from MQTT.");
+  MqLog("Disconnected from MQTT.\n");
   if (WiFi.isConnected()) {
     xTimerStart(mqttReconnectTimer, 0);
   }
   gpio::GpioInOut::instance().clrLedConnected();
 }
 
-void onMqttPublish(uint16_t packetId) {
-  Serial.printf("Pub ack. Id: %lu\n", packetId);
-}
+void onMqttPublish(uint16_t packetId) { MqLog("Pub ack. Id: %lu\n", packetId); }
 
 void connectToWifi() {
-  Serial.println("Reconnecting to Wi-Fi...");
+  MqLog("Reconnecting to Wi-Fi...\n");
   nvm::LittleFsHelpers::instance().readMqttConf();
   // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
@@ -96,6 +94,7 @@ MqttHelper::MqttHelper() {
   _mqttPubLog = new char[MQTT_PATHLEN];
   _mqttPubSens = new char[MQTT_PATHLEN];
   _mqttSubCmd = new char[MQTT_PATHLEN];
+  _DoSerialPrint = true;
 
   char noneBuff[] = "none";
   strcpy(_mqttPubLog, noneBuff);
@@ -130,15 +129,11 @@ void MqttHelper::MqttSetup() {
 }
 
 void MqttHelper::printMqttConf() {
-  int result;
-
   if (WiFi.status() == WL_CONNECTED) {
-    result =
-        MqLog("\nWIFI is connected, local IP: %i.%i.%i.%i\n", WiFi.localIP()[0],
-              WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
-
+    MqLog("\nWIFI is connected, local IP: %i.%i.%i.%i\n", WiFi.localIP()[0],
+          WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
   } else {
-    result = MqLog("\nWifi is not  connected.\n");
+    MqLog("\nWifi is not  connected.\n");
   }
   MqLog("MqttHost: %i.%i.%i.%i:%lu\n", _mqttHost[0], _mqttHost[1], _mqttHost[2],
         _mqttHost[3], _mqttPort);
@@ -156,13 +151,15 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
   Measurement *actMeasurement = measurementPivot->GetNextMeasurement();
 
   while (actMeasurement != nullptr) {
-    sprintf(buff, "%llu %.02f;\0", actMeasurement->sensorId,
-            actMeasurement->meanValue);
+    if ((!actMeasurement->isTimeout()) &&
+        (!isnanf(actMeasurement->meanValue))) {
+      sprintf(buff, "%llu %.02f;\0", actMeasurement->sensorId,
+              actMeasurement->meanValue);
 
-    uint16_t packetIdPub1 = mqttClient.publish(_mqttPubSens, 1, true, buff);
-    // Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", _mqttPubSens,
-    //               packetIdPub1);
-
+      uint16_t packetIdPub1 = mqttClient.publish(_mqttPubSens, 1, true, buff);
+      // Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", _mqttPubSens,
+      //               packetIdPub1);
+    }
     actMeasurement = measurementPivot->GetNextMeasurement();
   }
 }
@@ -184,6 +181,19 @@ int MqttHelper::publishLog(uint8_t *message, uint16_t size) {
 
 int MqttHelper::publishLog(std::string message) {
   return publishLog((uint8_t *)message.c_str(), message.length());
+}
+
+void MqttHelper::copyMqttPath(char *buffer, std::string spot,
+                              const char *mqttSuffix, size_t mqttLen) {
+  uint8_t spotLen = strlen(spot.c_str());
+
+  if ((spotLen + mqttLen) > MQTT_PATHLEN) {
+    spotLen = MQTT_PATHLEN - mqttLen;
+    MqLog("\nWARNING: Spotname is too long. It will be truncated.\n");
+  }
+
+  memcpy(buffer, spot.c_str(), spotLen);
+  memcpy(&buffer[spotLen], mqttSuffix, mqttLen);
 }
 
 } // namespace wifi

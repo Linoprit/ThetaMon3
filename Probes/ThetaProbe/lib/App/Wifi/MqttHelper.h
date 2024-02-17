@@ -52,17 +52,7 @@ private:
   bool _DoSerialPrint;
 
   void copyMqttPath(char *buffer, std::string spot, const char *mqttSuffix,
-                    size_t mqttLen) {
-    uint8_t spotLen = strlen(spot.c_str());
-
-    if ((spotLen + mqttLen) > MQTT_PATHLEN) {
-      spotLen = MQTT_PATHLEN - mqttLen;
-      Serial.printf("\nWARNING: Spotname is too long. It will be truncated.\n");
-    }
-
-    memcpy(buffer, spot.c_str(), spotLen);
-    memcpy(&buffer[spotLen], mqttSuffix, mqttLen);
-  }
+                    size_t mqttLen);
 };
 } // namespace wifi
 

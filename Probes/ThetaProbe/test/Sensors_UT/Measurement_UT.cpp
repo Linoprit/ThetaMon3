@@ -89,6 +89,21 @@ void OutOfRanges_UT() {
   TEST_ASSERT_EQUAL_FLOAT(60.00f, msmnt.GetMeanValue());
 }
 
+void MeasurementTimeout_UT() {
+  msmnt::Measurement msmnt;
+  msmnt.UpdateValue(400.0f);
+
+  TEST_ASSERT_FALSE(msmnt.isTimeout());
+
+  // Causes underflow on lastUpdateTick, but in timeout-calculation the correct
+  // results are obtained.
+  timeval timeVal;
+  gettimeofday(&timeVal, NULL);
+  msmnt.lastUpdateTick = timeVal.tv_sec - MEASUREMENT_TIMEOUT_SEC - 1u;
+
+  TEST_ASSERT_TRUE(msmnt.isTimeout());
+}
+
 void MeasurementPivot_UT() {
   msmnt::MeasurementPivot msmntPvt;
 

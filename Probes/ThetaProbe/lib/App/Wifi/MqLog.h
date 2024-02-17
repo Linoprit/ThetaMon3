@@ -7,15 +7,7 @@
 
 int MqLog(const char *format, ...);
 int MqLogCycle(void);
-
-// class MqLog
-// {
-// public:
-//     MqLog();
-//     virtual ~MqLog(){};
-
-// private:
-
-// };
+// NOT threadsave
+void MqPutchar(char character);
 
 #endif

@@ -13,7 +13,8 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "cstring": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "new": "cpp"
     },
     "C_Cpp.formatting": "disabled",
     "editor.formatOnPaste": true,

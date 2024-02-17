@@ -13,32 +13,33 @@
 extern "C" {
 #endif
 
-void led_task_gpio(void* unused_arg);
-void led_task_pico(void* unused_arg);
-void ReadSensors(void* unused_arg);
+//void led_task_gpio(void* unused_arg);
+//void led_task_pico(void* unused_arg);
+//void ReadSensors(void* unused_arg);
+//void startPrintTask(void* unused_arg);
 void startSensorsTask(void* unused_arg);
-void startPrintTask(void* unused_arg);
+void startComLineTask(void* unused_arg);
 
 #ifdef __cplusplus
 }           // extern "C"
 #endif
 
-#include <Arduino.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/queue.h>
+// #include <Arduino.h>
+// #include <freertos/FreeRTOS.h>
+// #include <freertos/task.h>
+// #include <freertos/queue.h>
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdint.h>
+// #include <stdbool.h>
+// #include <stdlib.h>
+// #include <stdio.h>
+// #include <string.h>
+// #include <time.h>
+// #include <stdio.h>
+// #include <stdint.h>
 
-#include "sdkconfig.h"
-#include "esp_system.h"
-#include "esp_task_wdt.h"
+// #include "sdkconfig.h"
+// #include "esp_system.h"
+// #include "esp_task_wdt.h"
 
 // act measured values are put in here
 // extern volatile QueueHandle_t measurementQueue;
@@ -46,9 +47,9 @@ void startPrintTask(void* unused_arg);
 
 
 // from examples, to be deleted.
-#define         LED_1_PIN           32
-#define         LED_2_PIN           33
-extern volatile QueueHandle_t ledQueue;
-const TickType_t ms_delay = 1000 / portTICK_PERIOD_MS;
+// #define         LED_1_PIN           32
+// #define         LED_2_PIN           33
+// extern volatile QueueHandle_t ledQueue;
+// const TickType_t ms_delay = 1000 / portTICK_PERIOD_MS;
 
 #endif /* SRC_TASKS_TASKSCOMMON_H_ */

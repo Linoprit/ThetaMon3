@@ -1,7 +1,7 @@
-#include "Sensors.h"
 #include "FileSystem/LittleFsHelpers.h"
+#include "Sensors.h"
 #include <DigitalIo/GpioInOut.h>
-
+#include <sys/time.h>
 
 namespace msmnt {
 
@@ -21,37 +21,37 @@ Sensors::Sensors()
       _relays(&_measurementPivot) {}
 
 void Sensors::initHardware(void) {
+  wifi::MqttHelper::instance().init();
+  wifi::MqttHelper::instance().MqttSetup();
+  delay(1000);
+
   _ds1820Ch1.initHardware();
   _ds1820Ch2.initHardware();
   _bme280.initHardware();
-  
+  delay(100);
+
   // MqttSetup and readIdTable push commands to the interpreter-queue.
   // Thats, why this must happen in the same task.
-  nvm::LittleFsHelpers::instance().readIdTable();  
+  nvm::LittleFsHelpers::instance().readIdTable();
   _measurementPivot.ResetConfigChangedFlags();
 
-  wifi::MqttHelper::instance().init();
-  wifi::MqttHelper::instance().MqttSetup();
 }
 
 void Sensors::cycle(void) {
-  _ds1820Ch1.cycle();
-  _ds1820Ch2.cycle();
-  _bme280.cycle();
-  _relays.cycle();  
-
-  // ToDo cycle through measurements an mark invalid values.
+    _ds1820Ch1.cycle();
+    _ds1820Ch2.cycle();
+    _bme280.cycle();
+    _relays.cycle();
 
   _updateCount++;
-  if (_updateCount >= Measurement::VALUES_BUFF_LEN -1){
+  if (_updateCount >= Measurement::VALUES_BUFF_LEN - 1) {
     wifi::MqttHelper::instance().pubishMeasurements(&_measurementPivot);
     _updateCount = 0;
-  }  
+  }
 }
 
-bool Sensors::saveSensorIdTable(){
+bool Sensors::saveSensorIdTable() {
   return nvm::LittleFsHelpers::instance().saveSensIdTable(&_measurementPivot);
 }
-
 
 } // namespace msmnt

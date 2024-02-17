@@ -10,9 +10,9 @@
             "includePath": [
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/src",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/App",
+                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/System",
                 "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit BME280 Library",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit Unified Sensor",
                 "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit BusIO",
@@ -252,9 +252,9 @@
                 "path": [
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/src",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/App",
+                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/System",
                     "/home/harald/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                    "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/lib/Crc32Calculation",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit BME280 Library",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit Unified Sensor",
                     "/home/harald/WiFiBoards/Esp32Projects/ThetaMon3/Probes/ThetaProbe/.pio/libdeps/esp32dev/Adafruit BusIO",

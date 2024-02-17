@@ -32,6 +32,10 @@ constexpr uint32_t MEASURETASK_CYCLE = 5000;
 // network. (DS1820 Sensors * Channels + BME280 Temp/Humi/Press + RelayStates)
 constexpr uint8_t MAX_SENSORS = (DS18B20_MAX_DEVICES * 2 + 3 + 1);
 
+// Measurement timeout. If a sensor fails to be read for this time (in seconds),
+// it is marked as invalid. 
+constexpr uint32_t MEASUREMENT_TIMEOUT_SEC = 300;
+
 // ******* BME280 *******
 // constexpr uint8_t BME280_I2CADDR = 0xEC // 0x76<<1	SDO -> GND
 constexpr uint8_t BME280_I2CADDR = 0x77; // 0x77<<1	SDO -> VCC

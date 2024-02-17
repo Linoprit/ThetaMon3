@@ -16,6 +16,7 @@
 #include <IPAddress.h>
 #include <OsHelpers.h>
 #include <Sensors/Sensors.h>
+#include <Wifi/MqLog.h>
 #include <cstring>
 
 namespace cLine {
@@ -61,8 +62,7 @@ bool Interpreter::doit(CmdBufferType comLine) {
 
   else if (cmd == 959926194) 	{    result = shutup();  							} // shutup
   else if (cmd == 1639364146) {    result = talk();  								} // talk
-  else if (cmd == 1676458703) {		 Serial.println();	
-	  															 OsHelpers::SYSTEM_REBOOT();  		} // reboot
+  else if (cmd == 1676458703) {		 OsHelpers::SYSTEM_REBOOT();  		} // reboot
   else if (cmd == 1973435441) {    OsHelpers::SYSTEM_EXIT();  			} // exit
 	else if (cmd == 3288008560) {		 CommandLine::termDisplayClear();    
 																	 CommandLine::termResetCursor();
@@ -85,14 +85,14 @@ bool Interpreter::doit(CmdBufferType comLine) {
 bool Interpreter::storeWifi(Lexer *lex) {
   ChrToken *chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: storeWifi \"<SSID>\" \"<PASS>\".\n");
+    MqLog("\nUsage: storeWifi \"<SSID>\" \"<PASS>\".\n");
     return false;
   }
   std::string ssid = chrToken->getVal();
 
   chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: storeWifi \"<SSID>\" \"<PASS>\".\n");
+    MqLog("\nUsage: storeWifi \"<SSID>\" \"<PASS>\".\n");
     return false;
   }
   std::string pass = chrToken->getVal();
@@ -106,7 +106,7 @@ bool Interpreter::storeWifi(Lexer *lex) {
 bool Interpreter::storeMqttSpot(Lexer *lex) {
   ChrToken *chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: storeMqttSpot \"<Spotname>\".\n");
+    MqLog("\nUsage: storeMqttSpot \"<Spotname>\".\n");
     return false;
   }
   std::string spot = chrToken->getVal();
@@ -123,7 +123,7 @@ bool Interpreter::storeMqttHost(Lexer *lex) {
   for (uint_fast8_t i = 0; i < 4; i++) {
     UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
     if (intToken->getType() != Token::UInt64) {
-      Serial.printf("\nUsage: storeMqttHost <int> <int> <int> <int>. (i.e. 192 "
+      MqLog("\nUsage: storeMqttHost <int> <int> <int> <int>. (i.e. 192 "
                     "168 15 2)\n");
       return false;
     }
@@ -142,7 +142,7 @@ bool Interpreter::storeMqttHost(Lexer *lex) {
 bool Interpreter::storeMqttPort(Lexer *lex) {
   UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
   if (intToken->getType() != Token::UInt64) {
-    Serial.printf("\nUsage: storeMqttPort <int>.");
+    MqLog("\nUsage: storeMqttPort <int>.");
     return false;
   }
   uint16_t port = (uint16_t)intToken->getVal();
@@ -174,7 +174,7 @@ bool Interpreter::tstRelay(Lexer *lex) {
   }
 
   if (isError) {
-    Serial.printf("\nUsage: tstRelay1 <int RelayNr> <int on/off>.");
+    MqLog("\nUsage: tstRelay1 <int RelayNr> <int on/off>.");
     return false;
   } else {
     gpio::GpioInOut::instance().tstRelay(relayNr, static_cast<bool>(onOrOff));
@@ -188,7 +188,7 @@ bool Interpreter::setMqttHost(Lexer *lex) {
   for (uint_fast8_t i = 0; i < 4; i++) {
     UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
     if (intToken->getType() != Token::UInt64) {
-      Serial.printf("\nUsage: setMqttHost <int> <int> <int> <int>. (i.e. 192 "
+      MqLog("\nUsage: setMqttHost <int> <int> <int> <int>. (i.e. 192 "
                     "168 15 2)\n");
       return false;
     }
@@ -204,7 +204,7 @@ bool Interpreter::setMqttPort(Lexer *lex) {
 
   UInt64Token *intToken = (UInt64Token *)lex->getNextToken();
   if (intToken->getType() != Token::UInt64) {
-    Serial.printf("\nUsage: setMqttPort <long int>.\n");
+    MqLog("\nUsage: setMqttPort <long int>.\n");
     return false;
   }
   port = (uint16_t)intToken->getVal();
@@ -216,24 +216,24 @@ bool Interpreter::setMqttPort(Lexer *lex) {
 bool Interpreter::getMacAddress() {
   uint8_t macBuff[6];
   OsHelpers::GetMacAddress(macBuff);
-  Serial.printf("\nDEC %i:%i:%i:%i:%i:%i ", macBuff[0], macBuff[1], macBuff[2],
+  MqLog("\nDEC %i:%i:%i:%i:%i:%i ", macBuff[0], macBuff[1], macBuff[2],
                 macBuff[3], macBuff[4], macBuff[5]);
-  Serial.printf("(HEX %02x:%02x:%02x:%02x:%02x:%02x)\n", macBuff[0], macBuff[1],
-                macBuff[2], macBuff[3], macBuff[4], macBuff[5]);
+  MqLog("(HEX %02x:%02x:%02x:%02x:%02x:%02x)\n", macBuff[0], macBuff[1],
+        macBuff[2], macBuff[3], macBuff[4], macBuff[5]);
   return true;
 }
 
 bool Interpreter::startWifi(Lexer *lex) {
   ChrToken *chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: startWifi \"<SSID>\" \"<PASS>\".\n");
+    MqLog("\nUsage: startWifi \"<SSID>\" \"<PASS>\".\n");
     return false;
   }
   std::string ssid = chrToken->getVal();
 
   chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: startWifi \"<SSID>\" \"<PASS>\".\n");
+    MqLog("\nUsage: startWifi \"<SSID>\" \"<PASS>\".\n");
     return false;
   }
   std::string pass = chrToken->getVal();
@@ -254,7 +254,7 @@ bool Interpreter::getMqttConf() {
 bool Interpreter::setMqttSpot(Lexer *lex) {
   ChrToken *chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf("\nUsage: setMqttSpot \"<spotName>\". (i.e. 'Lager')\n");
+    MqLog("\nUsage: setMqttSpot \"<spotName>\". (i.e. 'Lager')\n");
     return false;
   }
 
@@ -264,13 +264,13 @@ bool Interpreter::setMqttSpot(Lexer *lex) {
 
 bool Interpreter::shutup() {
   wifi::MqttHelper::instance().stopSerialPrint();
-  Serial.println("\nSerial print is inhibited.");
+  MqLog("\nSerial print is inhibited.\n");
   return true;
 }
 
 bool Interpreter::talk() {
   wifi::MqttHelper::instance().startSerialPrint();
-  Serial.println("\nSerial print is active.");
+  MqLog("\nSerial print is active.\n");
   return true;
 }
 
@@ -279,17 +279,17 @@ bool Interpreter::printMeasures(Lexer *lex) {
       msmnt::Sensors::instance().getMeasurementPivot();
 
   if (measurementPivot == nullptr) {
-    Serial.println("\nmeasurementPivot is null.");
+    MqLog("\nmeasurementPivot is null.\n");
     return false;
   } else {
-    Serial.println();
+    MqLog("\n");
     measurementPivot->Dump();
   }
   return true;
 }
 
 bool Interpreter::listDir(Lexer *lex) {
-  Serial.println();
+  MqLog("\n");
   nvm::LittleFsHelpers::instance().listDir("/", 3);
   return true;
 }
@@ -297,11 +297,11 @@ bool Interpreter::listDir(Lexer *lex) {
 bool Interpreter::readFile(Lexer *lex) {
   ChrToken *chrToken = (ChrToken *)lex->getNextToken();
   if (chrToken->getType() != Token::String) {
-    Serial.printf(
+    MqLog(
         "\nUsage: readFile \"<filename>\". (don't forget the slash!)\n");
     return false;
   }
-  Serial.println();
+  MqLog("\n");
   nvm::LittleFsHelpers::instance().readFile(chrToken->getVal());
   return true;
 }
@@ -313,10 +313,10 @@ bool Interpreter::saveSensIdTable(Lexer *lex) {
 bool Interpreter::calcHash(Lexer *lex) {
   CmdToken *cmdToken = (CmdToken *)lex->getNextToken();
   if (cmdToken->getType() != Token::Command) {
-    Serial.printf("\nUsage: calcHash <commandString>\n");
+    MqLog("\nUsage: calcHash <commandString>\n");
     return false;
   }
-  Serial.printf("\nHash = %lu\n", cmdToken->getVal());
+  MqLog("\nHash = %lu\n", cmdToken->getVal());
 
   return true;
 }
@@ -332,7 +332,7 @@ bool Interpreter::getStationId(Lexer *lex) {
   OsHelpers::GetMacAddress(mac);
   std::string stationId = msmnt::Measurement::DumpSensId(sensorId);
 
-  Serial.printf("\nStation ID = %llu (%s)\n", sensorId, stationId.c_str());
+  MqLog("\nStation ID = %llu (%s)\n", sensorId, stationId.c_str());
   return true;
 }
 
@@ -379,10 +379,10 @@ bool Interpreter::setSensId(Lexer *lex) {
       msmnt::Sensors::instance().getMeasurementPivot()->UpdateConfig(sensConf);
 
   if (success) {
-    Serial.println("\nUpdateConfig done.");
+    MqLog("\nUpdateConfig done.\n");
   } else {
     std::string stationId = msmnt::Measurement::DumpSensId(sensConf.sensorId);
-    Serial.printf("\nSensId ignored: %s\n", stationId.c_str());
+    MqLog("\nSensId ignored: %llu (%s)\n",sensConf.sensorId, stationId.c_str());
   }
 
   return true;

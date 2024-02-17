@@ -8,6 +8,7 @@
 #include <cstring>
 #include <limits>
 #include <math.h>
+#include <Wifi/MqLog.h>
 #include <stdint.h>
 
 namespace msmnt {
@@ -49,6 +50,8 @@ public:
     REL_01 = 1,
     REL_02 = 2,
   };
+
+  // Don't forget: used in array Sensors::_isChannelActive
   enum SensorChannel {
     SC_NONE = 0,
     CH_1 = 1,  // OneWire Channel 1
@@ -56,6 +59,7 @@ public:
     I2C_1 = 3, // I2C (BME280)
     I2C_2 = 4, // unused
     GPIO = 5,  // Digital Pin (Relay)
+    Last = GPIO, // Marks the last entry
   };
 
   SensorId sensorId = INVALID_SENS_ID; // 8 bytes integer.
@@ -123,6 +127,19 @@ public:
       break;
     }
     return true;
+  }
+
+  bool isTimeout() {
+    timeval timeVal;
+    gettimeofday(&timeVal, NULL);
+
+    uint32_t curTimeSec = timeVal.tv_sec;
+    uint32_t valueTimeSec = lastUpdateTick + MEASUREMENT_TIMEOUT_SEC;
+
+    if (valueTimeSec < curTimeSec) {
+      return true;
+    }
+    return false;
   }
 
   // Make a clean string, the maximum length of shortname-attribute.
@@ -242,33 +259,41 @@ public:
   }
 
   void Dump() {
-    Serial.printf("sensId = %llu ", sensorId);
-    Serial.printf("(%s)\n", DumpSensId(sensorId).c_str());
+    MqLog("sensId = %llu ", sensorId);
+    MqLog("(%s)\n", DumpSensId(sensorId).c_str());
 
-    Serial.printf("meanValue = %.02f\t", meanValue);
-    Serial.printf("lastUpdateTick = %lu\n", lastUpdateTick);
+    MqLog("shortname = %s", GetShortname().c_str());
+    MqLog("\tsensType = %s\n", DumpSensType(sensType).c_str());
 
-    Serial.printf("minVal = %.2f\t\t", minVal);
-    Serial.printf("maxVal = %.2f\n", maxVal);
+    MqLog("meanValue = %.02f\t", meanValue);
+    MqLog("\tlastUpdateTick = %lu\n", lastUpdateTick);
 
-    Serial.printf("sensType = %s", DumpSensType(sensType).c_str());
-    Serial.printf("\t\tsensChan = %s", DumpSensChannel(sensChan).c_str());
-    Serial.printf("\trelayNr = %i\n", relayNr);
-
-    Serial.print("values = ");
+    MqLog("valueIndex = %i\t\t", valueIndex);
+    MqLog("values = ");
     for (uint_fast8_t i = 0; i < VALUES_BUFF_LEN; i++) {
-      Serial.printf("%.2f ", values[i]);
+      MqLog("%.2f ", values[i]);
     }
+    //delay(30); // wait for MqLog   
+    MqLog("\nminVal = %.2f\t\t", minVal);
+    MqLog("maxVal = %.2f\n", maxVal);
+   
+    MqLog("sensChan = %s", DumpSensChannel(sensChan).c_str());
+    MqLog("\t\trelayNr = %i\n", relayNr);
 
-    Serial.printf("\t\tvalueIndex = %i\n", valueIndex);
-    Serial.printf("shortname = %s", GetShortname().c_str());
-
-    Serial.printf("\tconfigChanged = ");
+    MqLog("configChanged = ");
     if (configChanged) {
-      Serial.printf("true\n");
+      MqLog("true");
     } else {
-      Serial.printf("false\n");
+      MqLog("false");
     }
+
+    MqLog("\tisTimeout = ");
+    if (isTimeout()) {
+      MqLog("true\n");
+    } else {
+      MqLog("false\n");
+    }
+    //delay(30); // wait for MqLog   
   }
 
 private:

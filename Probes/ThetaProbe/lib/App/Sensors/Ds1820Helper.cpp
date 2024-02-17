@@ -1,4 +1,6 @@
 #include "Ds1820Helper.h"
+#include <Wifi/MqLog.h>
+
 
 namespace msmnt {
 
@@ -14,22 +16,24 @@ Ds1820Helper::Ds1820Helper(Measurement::SensorChannel channel,
 
 void Ds1820Helper::initHardware(void) {
   uint8_t address[8];
+  uint8_t senorCount = 0;
   _sensorsCh.begin();
   _oneWireCh.reset_search();
 
-  Serial.printf("Searching oneWire on channel %s\n",
+  MqLog("Searching oneWire on channel %s\n",
                 Measurement::DumpSensChannel(_channel).c_str());
 
   while (_oneWireCh.search(address)) {
-    Serial.print("ROM = ");
-    Serial.println(Measurement::DumpSensIdArray(address).c_str());
+    MqLog("ROM = %s\n", Measurement::DumpSensIdArray(address).c_str());
 
     if (OneWire::crc8(address, 7) != address[7]) {
-      Serial.println("CRC is not valid!");
+      MqLog("CRC is not valid!\n");
       continue;
     }
     _measurementPivot->StoreSensId(address, _channel);
+    senorCount++;
   }
+  MqLog("Found sensors: %i\n", senorCount);
 }
 
 void Ds1820Helper::cycle() {
@@ -58,10 +62,9 @@ void Ds1820Helper::cycle() {
 
     bool updateRes = _measurementPivot->UpdateValue(sensId, temperature);
     if (!updateRes) {
-
       string idStr = Measurement::DumpSensId(sensId);
       string shortName = string(actMeasurement->shortname);
-      Serial.printf("Updating value failed: %s / %s", idStr.c_str(),
+      MqLog("Updating value failed: %s / %s\n", idStr.c_str(),
                     shortName.c_str());
     }
   }

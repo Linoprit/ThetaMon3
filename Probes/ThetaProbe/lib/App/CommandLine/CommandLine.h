@@ -8,11 +8,11 @@
 #ifndef SYSTEM_COMMANDLINE_H_
 #define SYSTEM_COMMANDLINE_H_
 
-#include <Arduino.h>
 #include "ComLineConfig.h"
 #include "History.h"
+#include <Arduino.h>
 #include <Interpreter/Interpreter.h>
-//#include <SimpleQueue.h>
+#include <Wifi/MqLog.h>
 
 namespace cLine {
 
@@ -125,7 +125,7 @@ public:
   //  1 erase from start of line to cursor,
   //  2 erase line
   static void termEraseLine(uint8_t n) { Serial.printf("\033[%dK", n); };
-  static void termPrompt() { Serial.printf(">"); };
+  static void termPrompt() { MqPutchar('>'); };
 
 protected:
   // SimpleQueue<uint8_t> _keyBuffer;

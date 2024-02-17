@@ -6,14 +6,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-constexpr uint16_t TX_BUFF_LEN = 512;
+constexpr uint16_t TX_BUFF_LEN = 1024;
 
-constexpr uint16_t TMP_BUFF_LEN = 128;
+constexpr uint16_t TMP_BUFF_LEN = 512;
 uint8_t txBuff[TX_BUFF_LEN];
 uint16_t tx_act_pos = 0;
 
 extern SemaphoreHandle_t mqBuffSemHandle;
-// SemaphoreHandle_t mqBuffSemHandle = xSemaphoreCreateBinary();
 
 uint16_t MqLogBuffFreeBytes(void) { return TX_BUFF_LEN - tx_act_pos; }
 
@@ -35,6 +34,16 @@ int MqLogCycle(void) {
   return _SUCCESS_;
 }
 
+// NOT threadsave!!
+void MqPutchar(char character) {
+  txBuff[tx_act_pos] = character;
+  tx_act_pos++;
+  if (tx_act_pos >= (TX_BUFF_LEN - 1)) {
+    tx_act_pos = TX_BUFF_LEN - 1;
+  }
+}
+
+
 int MqLog(const char *format, ...) {
   uint8_t tmpBuff[TMP_BUFF_LEN];
 
@@ -46,7 +55,7 @@ int MqLog(const char *format, ...) {
   if (MqLogBuffFreeBytes() < tmpLen)
     return _FAIL_;
 
-  if (xSemaphoreTake(mqBuffSemHandle, 10) != pdTRUE) {
+  if (xSemaphoreTake(mqBuffSemHandle, 50) != pdTRUE) {
     return _FAIL_;
   }
   std::memcpy(&txBuff[tx_act_pos], tmpBuff, tmpLen);

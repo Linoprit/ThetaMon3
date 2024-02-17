@@ -6,8 +6,8 @@
  *  Inspired by Cat (https://github.com/ShareCat/STM32CommandLine)
  */
 
-#include <AppTypes.h>
 #include "CommandLine.h"
+#include <AppTypes.h>
 #include <new>
 
 using namespace std;
@@ -26,7 +26,7 @@ CommandLine &CommandLine::instance(void) {
 
 CommandLine::CommandLine()
     : //_keyBuffer(KEY_BUFFER_LEN), _cmdPos(0) {
-      _cmdPos(0), _keyBufferQueue (keyBufferQueue) {  
+      _cmdPos(0), _keyBufferQueue(keyBufferQueue) {
   _flagInitIsDone = false;
   _cmdBuffer.fill('\0');
   // termDisplayClear();
@@ -99,6 +99,7 @@ void CommandLine::accumulateChar(uint8_t chr) {
   incCmdPos();
   termInsert(1u);
   Serial.write(&chr, 1);
+  //MqPutchar(chr);
 }
 
 void CommandLine::procSqrEscKeys(void) {
@@ -163,12 +164,12 @@ void CommandLine::procEnter(void) {
 
   if (_cmdBuffer.at(0) == '\0') { // line empty?
     Serial.printf("\n\0");
-  } else {
+  } else {   
     bool result = _interpret.doit(_cmdBuffer);
     if (!result) {
-      Serial.printf("\nUnknown command.\n\0");
+      MqLog("\nUnknown command.\n\0");
     } else {
-      Serial.printf("\n** DONE **\n\0"); //  remember TI-99/4A?
+      MqLog("\n** DONE **\n\0"); //  remember TI-99/4A?
     }
   }
   termPrompt();
@@ -205,7 +206,7 @@ void CommandLine::procArrowUp(void) {
   termPos1();
   termEraseLine(2u);
   termPrompt();
-  Serial.printf("%s", _cmdBuffer.data());
+  MqLog("%s", _cmdBuffer.data());
   syncCmdPos();
 }
 
@@ -217,7 +218,7 @@ void CommandLine::procArrowDown(void) {
   termPos1();
   termEraseLine(2u);
   termPrompt();
-  Serial.printf("%s", _cmdBuffer.data());
+  MqLog("%s", _cmdBuffer.data());
   syncCmdPos();
 }
 

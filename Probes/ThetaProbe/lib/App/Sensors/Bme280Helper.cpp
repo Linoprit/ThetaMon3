@@ -1,4 +1,5 @@
 #include "Bme280Helper.h"
+#include <Wifi/MqLog.h>
 #include <Wire.h>
 
 namespace msmnt {
@@ -36,25 +37,20 @@ void Bme280Helper::initHardware() {
 
   bool status = _bme280.begin(BME280_I2CADDR);
   if (!status) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring, "
-                   "address, sensor ID!");
-    Serial.print("SensorID was: 0x");
-    Serial.println(_bme280.sensorID(), 16);
+    MqLog("Could not find a valid BME280 sensor, check wiring, "
+          "address, sensor ID!\n");
+    MqLog("SensorID was: 0x%x\n", _bme280.sensorID());
   }
 
-  Serial.print("BME280 temperature Id: ");
-  Serial.println(Measurement::DumpSensId(_temperatureId).c_str());
-  Serial.print("BME280 humidity    Id: ");
-  Serial.println(Measurement::DumpSensId(_humidityId).c_str());
-  Serial.print("BME280 preassure   Id: ");
-  Serial.println(Measurement::DumpSensId(_pressureId).c_str());
-
-  // TODO set channelstatus to unconnected
+  MqLog("BME280 temperature Id: %s\n",
+        Measurement::DumpSensId(_temperatureId).c_str());
+  MqLog("BME280 humidity    Id: %s\n",
+        Measurement::DumpSensId(_humidityId).c_str());
+  MqLog("BME280 preassure   Id: %s\n",
+        Measurement::DumpSensId(_pressureId).c_str());
 }
 
 void Bme280Helper::cycle() {
-  // TODO if !channelstatus return
-
   _measurementPivot->UpdateValue(_temperatureId, _bme280.readTemperature());
   _measurementPivot->UpdateValue(_humidityId, _bme280.readHumidity());
   _measurementPivot->UpdateValue(_pressureId, _bme280.readPressure() / 100.0F);
