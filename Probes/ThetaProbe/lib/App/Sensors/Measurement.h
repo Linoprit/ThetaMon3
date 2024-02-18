@@ -10,6 +10,7 @@
 #include <math.h>
 #include <Wifi/MqLog.h>
 #include <stdint.h>
+#include <OsHelpers.h>
 
 namespace msmnt {
 
@@ -130,10 +131,11 @@ public:
   }
 
   bool isTimeout() {
-    timeval timeVal;
-    gettimeofday(&timeVal, NULL);
+    // timeval timeVal;
+    // gettimeofday(&timeVal, NULL);
+    //uint32_t curTimeSec = timeVal.tv_sec;
 
-    uint32_t curTimeSec = timeVal.tv_sec;
+    uint32_t curTimeSec = OsHelpers::GetTickSeconds();
     uint32_t valueTimeSec = lastUpdateTick + MEASUREMENT_TIMEOUT_SEC;
 
     if (valueTimeSec < curTimeSec) {
@@ -265,7 +267,7 @@ public:
     MqLog("shortname = %s", GetShortname().c_str());
     MqLog("\tsensType = %s\n", DumpSensType(sensType).c_str());
 
-    MqLog("meanValue = %.02f\t", meanValue);
+    MqLog("meanValue = %.02f", meanValue);
     MqLog("\tlastUpdateTick = %lu\n", lastUpdateTick);
 
     MqLog("valueIndex = %i\t\t", valueIndex);
@@ -273,7 +275,6 @@ public:
     for (uint_fast8_t i = 0; i < VALUES_BUFF_LEN; i++) {
       MqLog("%.2f ", values[i]);
     }
-    //delay(30); // wait for MqLog   
     MqLog("\nminVal = %.2f\t\t", minVal);
     MqLog("maxVal = %.2f\n", maxVal);
    
@@ -293,7 +294,6 @@ public:
     } else {
       MqLog("false\n");
     }
-    //delay(30); // wait for MqLog   
   }
 
 private:

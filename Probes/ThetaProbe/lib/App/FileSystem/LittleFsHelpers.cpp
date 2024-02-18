@@ -41,7 +41,7 @@ void LittleFsHelpers::readConfigFile(const char *filename) {
       xQueueSendToBack(keyBufferQueue, &chr, 50);      
     }
 
-    delay(100); // CommandLine-task must process the buffer
+    delay(60); // CommandLine-task must process the buffer
   }
   file.close();
 }
@@ -135,7 +135,7 @@ void LittleFsHelpers::readFile(const char *path) {
     }
     
     MqLog("%s", line.c_str());
-    delay(30);
+    delay(20);
   }
   file.close();
 }

@@ -11,13 +11,9 @@
 #include <Sensors/MeasurementPivot.h>
 #include <Wifi/MqttHelper.h>
 
-// ToDo
-// Mqtt password
-
 // Common tasks and queues definition
 TaskHandle_t sensorTaskHandle = NULL;
 TaskHandle_t comLineTaskHandle = NULL;
-SemaphoreHandle_t mqBuffSemHandle = NULL;
 
 void setup() {
   Serial.begin(115200);
@@ -38,10 +34,6 @@ void setup() {
   // in sequence.
   xTaskCreate(startSensorsTask, "SENSOR_TASK", 3024, NULL, 1,
               &sensorTaskHandle);
-
-  // used in MqLog
-  mqBuffSemHandle = xSemaphoreCreateBinary();
-  xSemaphoreGive(mqBuffSemHandle);
 }
 
 void loop() {

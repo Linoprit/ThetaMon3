@@ -24,9 +24,7 @@ CommandLine &CommandLine::instance(void) {
   return commandLine;
 }
 
-CommandLine::CommandLine()
-    : //_keyBuffer(KEY_BUFFER_LEN), _cmdPos(0) {
-      _cmdPos(0), _keyBufferQueue(keyBufferQueue) {
+CommandLine::CommandLine() : _cmdPos(0), _keyBufferQueue(keyBufferQueue) {
   _flagInitIsDone = false;
   _cmdBuffer.fill('\0');
   // termDisplayClear();
@@ -99,7 +97,6 @@ void CommandLine::accumulateChar(uint8_t chr) {
   incCmdPos();
   termInsert(1u);
   Serial.write(&chr, 1);
-  //MqPutchar(chr);
 }
 
 void CommandLine::procSqrEscKeys(void) {
@@ -164,7 +161,7 @@ void CommandLine::procEnter(void) {
 
   if (_cmdBuffer.at(0) == '\0') { // line empty?
     Serial.printf("\n\0");
-  } else {   
+  } else {
     bool result = _interpret.doit(_cmdBuffer);
     if (!result) {
       MqLog("\nUnknown command.\n\0");

@@ -8,6 +8,7 @@
 #include <DigitalIo/GpioInOut.h>
 #include <FileSystem/LittleFsHelpers.h>
 #include <WiFi.h>
+#include <OsHelpers.h>
 
 namespace wifi {
 
@@ -143,6 +144,7 @@ void MqttHelper::printMqttConf() {
 }
 
 void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
+  uint8_t publishCount = 0;
 
   // uint64: 20, float: 6, spaces: 1, EOL: 1
   char buff[30];
@@ -157,16 +159,16 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
               actMeasurement->meanValue);
 
       uint16_t packetIdPub1 = mqttClient.publish(_mqttPubSens, 1, true, buff);
+      publishCount++;
       // Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", _mqttPubSens,
       //               packetIdPub1);
     }
     actMeasurement = measurementPivot->GetNextMeasurement();
   }
+  MqLog("(%lu) Published %i sensors.\n", OsHelpers::GetTickSeconds(), publishCount);
 }
 
 int MqttHelper::publishLog(uint8_t *message, uint16_t size) {
-  message[size] = '\0';
-
   if (_DoSerialPrint) {
     Serial.printf((char *)message);
   }
