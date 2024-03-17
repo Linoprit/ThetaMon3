@@ -10,7 +10,6 @@ void startSensorsTask(void *unused_arg)
   while (true)
   {
     msmnt::Sensors::instance().cycle();
-    // delay(MEASURETASK_CYCLE); // TODO enable, if deployed
-    delay(2000);
+    delay(MEASURETASK_CYCLE);
   }
 }

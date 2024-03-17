@@ -44,7 +44,7 @@ void Sensors::cycle(void) {
     _relays.cycle();
 
   _updateCount++;
-  if (_updateCount >= Measurement::VALUES_BUFF_LEN - 1) {
+  if (_updateCount >= Measurement::VALUES_BUFF_LEN) {
     wifi::MqttHelper::instance().pubishMeasurements(&_measurementPivot);
     _updateCount = 0;
   }

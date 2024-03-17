@@ -67,20 +67,22 @@ bool MeasurementPivot::UpdateValue(Measurement::SensorId sensId, float value) {
   if (actMeasurement == nullptr) {
     return false;
   }
-  actMeasurement->UpdateValue(value);
 
-  timeval timeVal;
-  gettimeofday(&timeVal, NULL);
-  actMeasurement->lastUpdateTick = timeVal.tv_sec;
+  if (actMeasurement->UpdateValue(value)) {
+    timeval timeVal;
+    gettimeofday(&timeVal, NULL);
+    actMeasurement->lastUpdateTick = timeVal.tv_sec;
+    return true;
+  }
 
-  return true;
+  return false;
 }
 
 void MeasurementPivot::Dump() {
   ResetIter();
   Measurement *actMeasurement = GetNextMeasurement();
   while (actMeasurement != nullptr) {
-    delay(30); // wait for MqLog      
+    delay(30); // wait for MqLog
     actMeasurement->Dump();
     actMeasurement = GetNextMeasurement();
   }
