@@ -49,3 +49,12 @@ void loop() {
 
   delay(10);
 }
+
+/*
+mosquitto_sub -h localhost -t Lager/sens
+mosquitto_sub -h localhost -t Lager/log
+mosquitto_pub -t 'Lager/cmd' -m 'printMeasures'
+
+
+
+*/

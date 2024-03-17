@@ -80,9 +80,9 @@ public:
   Measurement() { InitValueArray(); }
   virtual ~Measurement() {}
 
-  void UpdateValue(float value) {
+  bool UpdateValue(float value) {
     if (!isInRange(value)) {
-      return;
+      return false;
     }
 
     values[valueIndex] = value;
@@ -100,6 +100,7 @@ public:
     if (count > 0.0) {
       meanValue = sum / count;
     }
+    return true;
   }
 
   bool isInRange(float value) {

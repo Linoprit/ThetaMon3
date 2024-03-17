@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 // ******* One Wire *******
+constexpr bool OW_LINE_INVERTED = true;
+
 constexpr uint8_t ONE_WIRE_CH1_PIN = 32;
 constexpr uint8_t ONE_WIRE_CH2_PIN = 33;
 
@@ -26,7 +28,7 @@ constexpr uint8_t DS18B20_MAX_DEVICES = 4; // in one channel
 constexpr uint32_t DS18B20_CONVERSION_TIMEOUT_MS = 5000;
 
 // time in [ms], the measureTask delays
-constexpr uint32_t MEASURETASK_CYCLE = 5000;
+constexpr uint32_t MEASURETASK_CYCLE = 60000;
 
 // how many sensors can be present on a device. Should be the same in the whole
 // network. (DS1820 Sensors * Channels + BME280 Temp/Humi/Press + RelayStates)
