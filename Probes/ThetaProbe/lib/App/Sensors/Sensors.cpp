@@ -13,10 +13,10 @@ Sensors &Sensors::instance(void) {
 }
 
 Sensors::Sensors()
-    : _ds1820Ch1(Measurement::CH_1, ONE_WIRE_CH1_PIN, DS18B20_PRECISION,
-                 &_measurementPivot),
-      _ds1820Ch2(Measurement::CH_2, ONE_WIRE_CH2_PIN, DS18B20_PRECISION,
-                 &_measurementPivot),
+    : _ds1820Ch1(Measurement::CH_1, ONE_WIRE_CH1_PIN_OUT, ONE_WIRE_CH1_PIN_IN,
+                 DS18B20_PRECISION, &_measurementPivot),
+      _ds1820Ch2(Measurement::CH_2, ONE_WIRE_CH2_PIN_OUT, ONE_WIRE_CH2_PIN_IN,
+                 DS18B20_PRECISION, &_measurementPivot),
       _bme280(Measurement::I2C_1, &_measurementPivot),
       _relays(&_measurementPivot) {}
 
@@ -34,14 +34,13 @@ void Sensors::initHardware(void) {
   // Thats, why this must happen in the same task.
   nvm::LittleFsHelpers::instance().readIdTable();
   _measurementPivot.ResetConfigChangedFlags();
-
 }
 
 void Sensors::cycle(void) {
-    _ds1820Ch1.cycle();
-    _ds1820Ch2.cycle();
-    _bme280.cycle();
-    _relays.cycle();
+  _ds1820Ch1.cycle();
+  _ds1820Ch2.cycle();
+  _bme280.cycle();
+  _relays.cycle();
 
   _updateCount++;
   if (_updateCount >= Measurement::VALUES_BUFF_LEN) {

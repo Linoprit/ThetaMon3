@@ -6,9 +6,14 @@
 
 // ******* One Wire *******
 constexpr bool OW_LINE_INVERTED = true;
+//#define OW_LINE_INVERTED true
 
-constexpr uint8_t ONE_WIRE_CH1_PIN = 32;
-constexpr uint8_t ONE_WIRE_CH2_PIN = 33;
+// constexpr uint8_t ONE_WIRE_CH1_PIN = 32;
+// constexpr uint8_t ONE_WIRE_CH2_PIN = 33;
+constexpr uint8_t ONE_WIRE_CH1_PIN_IN = 25;
+constexpr uint8_t ONE_WIRE_CH1_PIN_OUT = 26;
+constexpr uint8_t ONE_WIRE_CH2_PIN_IN = 32;
+constexpr uint8_t ONE_WIRE_CH2_PIN_OUT = 33;
 
 // ******* Digital IO *******
 constexpr uint8_t LED_ALIVE_PIN = 4;
@@ -19,6 +24,7 @@ constexpr uint8_t RELAY_CH2_PIN = 12;
 // ******* DS18B20 device *******
 // Conversion precision in bit
 constexpr uint8_t DS18B20_PRECISION = 12;
+//constexpr uint8_t DS18B20_PRECISION = 9;
 
 constexpr uint8_t DS18B20_SEARCH_RETRIES = 6;
 constexpr uint8_t DS18B20_MAX_DEVICES = 4; // in one channel

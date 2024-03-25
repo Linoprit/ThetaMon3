@@ -1,19 +1,20 @@
 #ifndef DS1820HELPER_H
 #define DS1820HELPER_H
 
-//#pragma once
+// #pragma once
 
-#include <Arduino.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
-#include "MeasurementPivot.h"
 #include "Measurement.h"
+#include "MeasurementPivot.h"
+#include <Arduino.h>
+#include <DallasTemperature.h>
+#include <OneWire.h>
 
 namespace msmnt {
 
 class Ds1820Helper {
 public:
-  Ds1820Helper(Measurement::SensorChannel channel, uint8_t oneWirePin, uint8_t resolution,
+  Ds1820Helper(Measurement::SensorChannel channel, uint8_t onwWirePinOut,
+               uint8_t oneWirePinIn, uint8_t resolution,
                MeasurementPivot *measurementPivot);
   virtual ~Ds1820Helper(){};
 
@@ -22,7 +23,7 @@ public:
 
 private:
   OneWire _oneWireCh;
-  DallasTemperature _sensorsCh;  
+  DallasTemperature _sensorsCh;
   Measurement::SensorChannel _channel;
   MeasurementPivot *_measurementPivot;
 };

@@ -1,16 +1,16 @@
 #include "Ds1820Helper.h"
 #include <Wifi/MqLog.h>
 
-
 namespace msmnt {
 
 using namespace std;
 
 Ds1820Helper::Ds1820Helper(Measurement::SensorChannel channel,
-                           uint8_t oneWirePin, uint8_t resolution,
+                           uint8_t oneWirePinOut, uint8_t oneWirePinIn,
+                           uint8_t resolution,
                            MeasurementPivot *measurementPivot)
-    : _oneWireCh(oneWirePin), _sensorsCh(&_oneWireCh), _channel(channel),
-      _measurementPivot(measurementPivot) {
+    : _oneWireCh(oneWirePinOut, oneWirePinIn), _sensorsCh(&_oneWireCh),
+      _channel(channel), _measurementPivot(measurementPivot) {
   _sensorsCh.setResolution(resolution);
 }
 
@@ -21,7 +21,7 @@ void Ds1820Helper::initHardware(void) {
   _oneWireCh.reset_search();
 
   MqLog("Searching oneWire on channel %s\n",
-                Measurement::DumpSensChannel(_channel).c_str());
+        Measurement::DumpSensChannel(_channel).c_str());
 
   while (_oneWireCh.search(address)) {
     MqLog("ROM = %s\n", Measurement::DumpSensIdArray(address).c_str());
@@ -37,8 +37,14 @@ void Ds1820Helper::initHardware(void) {
 }
 
 void Ds1820Helper::cycle() {
-  _sensorsCh.requestTemperatures();
-  delay(200);
+  DallasTemperature::request_t req = _sensorsCh.requestTemperatures();
+  // delay(200);
+
+
+  if (!req.result){
+    MqLog("request Temp failed.");
+  }
+
 
   _measurementPivot->ResetIter();
 
@@ -46,7 +52,6 @@ void Ds1820Helper::cycle() {
   for (uint_fast8_t i = 0; i < MAX_SENSORS; i++) {
     actMeasurement = _measurementPivot->GetNextMeasurement();
     if (actMeasurement == nullptr) {
-
       break;
     }
     if (actMeasurement->sensChan != _channel) {
@@ -64,8 +69,8 @@ void Ds1820Helper::cycle() {
     if (!updateRes) {
       string idStr = Measurement::DumpSensId(sensId);
       string shortName = string(actMeasurement->shortname);
-      MqLog("Updating value failed: %s / %s\n", idStr.c_str(),
-                    shortName.c_str());
+      MqLog("Updating value failed: %s / %s. Value: %.02f\n", idStr.c_str(),
+            shortName.c_str(), temperature);
     }
   }
 }
