@@ -34,6 +34,7 @@ private:
   bool storeMqttPort(Lexer *lex);
 
   bool tstRelay(Lexer *lex);
+  bool doMsmntCycle(Lexer *lex);
 
   bool printMeasures(Lexer *lex);
   bool listDir(Lexer *lex);

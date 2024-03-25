@@ -59,6 +59,7 @@ bool Interpreter::doit(CmdBufferType comLine) {
   else if (cmd == 3851424486)  {    result = storeMqttPort(&lex);   } // storeMqttPort
 
   else if (cmd == 2066544999)  {    result = tstRelay(&lex);       } // tstRelay
+  else if (cmd == 306019344)  {    result = doMsmntCycle(&lex);       } // cycle
 
   else if (cmd == 959926194) 	{    result = shutup();  							} // shutup
   else if (cmd == 1639364146) {    result = talk();  								} // talk
@@ -77,7 +78,7 @@ bool Interpreter::doit(CmdBufferType comLine) {
   // TODO
   // setCh1 on / off ; Ch2 I2c RelayChannel
   // getCh1 ...
-  // tstRelay1 on / off
+  // cycle 306019344
 
   return result;
 }
@@ -179,6 +180,11 @@ bool Interpreter::tstRelay(Lexer *lex) {
   } else {
     gpio::GpioInOut::instance().tstRelay(relayNr, static_cast<bool>(onOrOff));
   }
+  return true;
+}
+
+bool Interpreter::doMsmntCycle(Lexer *lex) {
+  msmnt::Sensors::instance().cycle();
   return true;
 }
 
