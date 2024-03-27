@@ -16,9 +16,12 @@ Ds1820Helper::Ds1820Helper(Measurement::SensorChannel channel,
 
 void Ds1820Helper::initHardware(void) {
   uint8_t address[8];
-  uint8_t senorCount = 0;
+  uint8_t sensorCount = 0;
   _sensorsCh.begin();
   _oneWireCh.reset_search();
+
+  MqLog("Devices on the bus / DS1820: %i / %i\n", _sensorsCh.getDeviceCount(),
+        _sensorsCh.getDS18Count());
 
   MqLog("Searching oneWire on channel %s\n",
         Measurement::DumpSensChannel(_channel).c_str());
@@ -31,30 +34,29 @@ void Ds1820Helper::initHardware(void) {
       continue;
     }
     _measurementPivot->StoreSensId(address, _channel);
-    senorCount++;
+    sensorCount++;
   }
-  MqLog("Found sensors: %i\n", senorCount);
+  MqLog("Found sensors: %i\n", sensorCount);
 }
 
 void Ds1820Helper::cycle() {
   DallasTemperature::request_t req = _sensorsCh.requestTemperatures();
   // delay(200);
 
-
-  if (!req.result){
+  if (!req.result) {
     MqLog("request Temp failed.");
+    return;
   }
-
 
   _measurementPivot->ResetIter();
 
   Measurement *actMeasurement;
   for (uint_fast8_t i = 0; i < MAX_SENSORS; i++) {
     actMeasurement = _measurementPivot->GetNextMeasurement();
-    if (actMeasurement == nullptr) {
-      break;
+    if (actMeasurement == nullptr) { // end of list
+      break; 
     }
-    if (actMeasurement->sensChan != _channel) {
+    if (actMeasurement->sensChan != _channel) { // other channel
       continue;
     }
 
@@ -65,8 +67,8 @@ void Ds1820Helper::cycle() {
       continue;
     }
 
-    bool updateRes = _measurementPivot->UpdateValue(sensId, temperature);
-    if (!updateRes) {
+    bool updResult = _measurementPivot->UpdateValue(sensId, temperature);
+    if (!updResult) {
       string idStr = Measurement::DumpSensId(sensId);
       string shortName = string(actMeasurement->shortname);
       MqLog("Updating value failed: %s / %s. Value: %.02f\n", idStr.c_str(),

@@ -236,7 +236,7 @@ void CRIT_TIMING OneWire::write_bit(uint8_t v) {
     delayMicroseconds(10); //10
     DIRECT_WRITE_HIGH(outreg, outmask); // drive output high
     interrupts();
-    delayMicroseconds(65); //55
+    delayMicroseconds(55); //55
   } else {
     noInterrupts();
     DIRECT_WRITE_LOW(outreg, outmask);
@@ -267,10 +267,10 @@ uint8_t CRIT_TIMING OneWire::read_bit(void) {
   delayMicroseconds(3);
   DIRECT_WRITE_HIGH(outreg, outmask);
   //DIRECT_MODE_INPUT(reg, mask); // let pin float, pull up will raise
-  delayMicroseconds(10); // 10
+  delayMicroseconds(10); // org=10
   r = DIRECT_READ(inreg, inmask);
   interrupts();
-  delayMicroseconds(53); // 53
+  delayMicroseconds(53); // org=53
   return r;
 }
 
