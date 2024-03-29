@@ -20,11 +20,9 @@ void Ds1820Helper::initHardware(void) {
   _sensorsCh.begin();
   _oneWireCh.reset_search();
 
-  MqLog("Devices on the bus / DS1820: %i / %i\n", _sensorsCh.getDeviceCount(),
+  MqLog("Channel %s, DS1820 sensors present: %i.\n",
+        Measurement::DumpSensChannel(_channel).c_str(),
         _sensorsCh.getDS18Count());
-
-  MqLog("Searching oneWire on channel %s\n",
-        Measurement::DumpSensChannel(_channel).c_str());
 
   while (_oneWireCh.search(address)) {
     MqLog("ROM = %s\n", Measurement::DumpSensIdArray(address).c_str());
@@ -36,7 +34,7 @@ void Ds1820Helper::initHardware(void) {
     _measurementPivot->StoreSensId(address, _channel);
     sensorCount++;
   }
-  MqLog("Found sensors: %i\n", sensorCount);
+  MqLog("Registered sensors: %i\n", sensorCount);
 }
 
 void Ds1820Helper::cycle() {
@@ -54,7 +52,7 @@ void Ds1820Helper::cycle() {
   for (uint_fast8_t i = 0; i < MAX_SENSORS; i++) {
     actMeasurement = _measurementPivot->GetNextMeasurement();
     if (actMeasurement == nullptr) { // end of list
-      break; 
+      break;
     }
     if (actMeasurement->sensChan != _channel) { // other channel
       continue;
