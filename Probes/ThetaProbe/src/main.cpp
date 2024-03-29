@@ -71,7 +71,7 @@ void setup() {
   oneWireCh2.begin(ONE_WIRE_CH2_PIN_OUT, ONE_WIRE_CH2_PIN_IN);
   _sensorsCh = new DallasTemperature(&oneWireCh1);
   _sensorsCh->setResolution(12);
-  pinMode(18, OUTPUT);
+  //pinMode(18, OUTPUT);
 }
 
 void loop() {
