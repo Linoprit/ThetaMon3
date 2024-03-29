@@ -53,14 +53,22 @@ void loop() {
 // #include <Config.h>
 // #include <OneWire.h>
 // #include <OneWire_direct_gpio.h>
+// #include <Sensors/Measurement.h>
+
+// using namespace msmnt;
+// using namespace std;
 
 // OneWire oneWireCh1;
 // OneWire oneWireCh2;
+// DallasTemperature* _sensorsCh;
 
 // void setup() {
 //   Serial.begin(115200);
 //   oneWireCh1.begin(ONE_WIRE_CH1_PIN_OUT, ONE_WIRE_CH1_PIN_IN);
 //   oneWireCh2.begin(ONE_WIRE_CH2_PIN_OUT, ONE_WIRE_CH2_PIN_IN);
+//   _sensorsCh = new DallasTemperature(&oneWireCh1);
+//   _sensorsCh->setResolution(12);
+//   //pinMode(18, OUTPUT);
 // }
 
 // void loop() {
@@ -73,20 +81,46 @@ void loop() {
 //   // delayMicroseconds(65);
 //   // directWriteHigh(ONE_WIRE_CH2_PIN_OUT);
 
-//   bool pPulse = oneWireCh1.reset();
-//   if (pPulse) {
-//     Serial.printf("Got pPulse.\n");
-//   } else {
-//     Serial.printf("No pPulse.\n");
-//   }
+//   // bool pPulse = oneWireCh1.reset();
+//   // if (pPulse) {
+//   //   Serial.printf("Got pPulse.\n");
+//   // } else {
+//   //   Serial.printf("No pPulse.\n");
+//   // }
 
-//     DeviceAddress deviceAddress;
+//   // DeviceAddress address;
+//   // oneWireCh1.reset_search();
 
-//     oneWireCh1.reset_search();
+//   // while (oneWireCh1.search(address)) {
+//   //   std::string id = msmnt::Measurement::DumpSensIdArray(address);
+//   //   Serial.printf("found: %s\n", id.c_str());
 
-//     while (oneWireCh1.search(deviceAddress)) {
-//       Serial.printf("found: %lu\n", deviceAddress);
+//   //   if (OneWire::crc8(address, 7) != address[7]) {
+//   //     MqLog("CRC is not valid!\n");
+//   //     continue;
+//   //   }
+//   // }
+
+
+//   uint8_t address[8];
+//   uint8_t senorCount = 0;
+//   _sensorsCh->begin();
+//   oneWireCh1.reset_search();
+
+//   // MqLog("Searching oneWire on channel %s\n",
+//   //       Measurement::DumpSensChannel(_channel).c_str());
+
+//   while (oneWireCh1.search(address)) {
+//     Serial.printf("ROM = %s\n", Measurement::DumpSensIdArray(address).c_str());
+
+//     if (OneWire::crc8(address, 7) != address[7]) {
+//       Serial.printf("CRC is not valid!\n");
+//       continue;
 //     }
+//     //_measurementPivot->StoreSensId(address, _channel);
+//     senorCount++;
+//   }
+//   Serial.printf("Found sensors: %i\n", senorCount);
 
 //   delay(500);
 // }

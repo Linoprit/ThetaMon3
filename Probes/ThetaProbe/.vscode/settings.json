@@ -14,7 +14,8 @@
         "utility": "cpp",
         "cstring": "cpp",
         "*.tcc": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "algorithm": "cpp"
     },
     "C_Cpp.formatting": "disabled",
     "editor.formatOnPaste": true,
