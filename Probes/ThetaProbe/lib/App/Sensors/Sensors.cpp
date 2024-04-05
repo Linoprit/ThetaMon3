@@ -13,9 +13,9 @@ Sensors &Sensors::instance(void) {
 }
 
 Sensors::Sensors()
-    : _ds1820Ch1(Measurement::CH_1, ONE_WIRE_CH1_PIN_OUT, DS18B20_PRECISION,
+    : _ds1820Ch1(Measurement::CH_1, ONE_WIRE_PIN_CH1, DS18B20_PRECISION,
                  &_measurementPivot),
-      _ds1820Ch2(Measurement::CH_2, ONE_WIRE_CH2_PIN_OUT, DS18B20_PRECISION,
+      _ds1820Ch2(Measurement::CH_2, ONE_WIRE_PIN_CH2, DS18B20_PRECISION,
                  &_measurementPivot),
       _bme280(Measurement::I2C_1, &_measurementPivot),
       _relays(&_measurementPivot) {}
