@@ -5,15 +5,8 @@
 #include <stdint.h>
 
 // ******* One Wire *******
-constexpr bool OW_LINE_INVERTED = true;
-// #define OW_LINE_INVERTED true
-
-// constexpr uint8_t ONE_WIRE_CH1_PIN = 32;
-// constexpr uint8_t ONE_WIRE_CH2_PIN = 33;
-constexpr uint8_t ONE_WIRE_CH1_PIN_IN = 25;
-constexpr uint8_t ONE_WIRE_CH1_PIN_OUT = 26;
-constexpr uint8_t ONE_WIRE_CH2_PIN_IN = 32;
-constexpr uint8_t ONE_WIRE_CH2_PIN_OUT = 33;
+constexpr uint8_t ONE_WIRE_PIN_CH1 = 26;
+constexpr uint8_t ONE_WIRE_PIN_CH2 = 33;
 
 // ******* Digital IO *******
 constexpr uint8_t LED_ALIVE_PIN = 4;
