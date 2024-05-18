@@ -14,6 +14,7 @@ void relayTestTimerCallback() {
 void GpioInOut::initHardware() {
   pinMode(LED_ALIVE_PIN, OUTPUT);
   pinMode(LED_CONNECTED_PIN, OUTPUT);
+  pinMode(LED_DEBUG_PIN, OUTPUT);
   pinMode(RELAY_CH1_PIN, OUTPUT);
   pinMode(RELAY_CH2_PIN, OUTPUT);
 
