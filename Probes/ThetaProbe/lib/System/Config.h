@@ -10,6 +10,7 @@ constexpr uint8_t ONE_WIRE_PIN_CH2 = 33;
 
 // ******* Digital IO *******
 constexpr uint8_t LED_ALIVE_PIN = 4;
+constexpr uint8_t LED_DEBUG_PIN = 17;
 constexpr uint8_t LED_CONNECTED_PIN = 2;
 constexpr uint8_t RELAY_CH1_PIN = 27;
 constexpr uint8_t RELAY_CH2_PIN = 12;

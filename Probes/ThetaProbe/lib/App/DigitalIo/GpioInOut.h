@@ -38,6 +38,12 @@ public:
     digitalWrite(LED_CONNECTED_PIN, !digitalRead(LED_CONNECTED_PIN));
   }
 
+  void setLedDebug() { digitalWrite(LED_DEBUG_PIN, HIGH); }
+  void clrLedDebug() { digitalWrite(LED_DEBUG_PIN, LOW); }
+  void tglLedDebug() {
+    digitalWrite(LED_DEBUG_PIN, !digitalRead(LED_DEBUG_PIN));
+  }
+
   void setRelayState(Measurement::RelayChannel relayNumber, bool state);
   bool getRelayState(Measurement::RelayChannel relayNumber);
   

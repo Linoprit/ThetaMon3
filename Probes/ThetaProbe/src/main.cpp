@@ -43,6 +43,7 @@ void loop() {
   if (aliveLedCycleCount > 100) {
     aliveLedCycleCount = 0;
     gpio::GpioInOut::instance().tglLedAlive();
+    gpio::GpioInOut::instance().tglLedDebug();
   }
 
   delay(10);
