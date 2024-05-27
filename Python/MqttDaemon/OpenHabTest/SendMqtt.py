@@ -8,11 +8,12 @@ from random import randrange
 
 
 # MQTT broker details
-broker_address = "192.168.178.24"
+broker_address = "192.168.178.101"
 broker_port = 1883
 
 # MQTT topic to publish messages to
-topic = "Lager/sens"
+topic_lager = "Lager/sens/ESP1Tmp"
+topic_werkstatt = "Werkstatt/sens"
 
 
 # Function to establish connection with the MQTT broker
@@ -49,15 +50,28 @@ try:
         # Your message to be sent
         # message = '{"light": 5424, "moisture": 30, "temperature": 21.4, "conductivity": 1020, "battery": 100}'
 
-        temp_value = 4.5 + (randrange(10)/10)
-        message = f'{{"name":"SensorOutdoor1", "temp":{temp_value}, "hum":{value} }}'
+        value_tmp = 4.5 + (randrange(10)/10)
+        value_prs = 950 + (randrange(50))
+        value_hum = 60 + (randrange(10))
+        message_lager \
+            = f'{{"TEMP":{value_tmp}}}'
+            # = f'{{"name":"Lager", "temp":{value_tmp}, "prs":{value_prs}, "hum":{value_hum} }}'
+
+        value_tmp = 25 + (randrange(15) / 10)
+        value_prs = 850 + (randrange(80))
+        value_hum = 50 + (randrange(15))
+        message_werkstatt \
+            = f'{{"name":"Werkstatt", "temp":{value_tmp}, "prs":{value_prs}, "hum":{value_hum} }}'
         # message = '{"value": 25}'
 
         # Publish the message to the topic
-        client.publish(topic, message)
+        client.publish(topic_lager, message_lager)
+        client.publish(topic_werkstatt, message_werkstatt)
+
 
         # Print a confirmation message
-        print(f"Sent: '{message}' to topic '{topic}'")
+        print(f"Sent: '{message_lager}' to topic '{topic_lager}'")
+        print(f"Sent: '{message_werkstatt}' to topic '{topic_werkstatt}'")
 
         value += 1
         if value > 200:

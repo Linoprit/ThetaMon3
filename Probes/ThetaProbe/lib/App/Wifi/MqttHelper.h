@@ -37,10 +37,13 @@ public:
 
   void pubishMeasurements(msmnt::MeasurementPivot *measurementPivot);
   int publishLog(uint8_t *message, uint16_t size);
-  int publishLog(std::string message);
+  int publishLog(std::string message); 
   void printMqttConf();
   void stopSerialPrint() { _DoSerialPrint = false; }
   void startSerialPrint() { _DoSerialPrint = true; }
+
+  std::string trim(const std::string &str,
+                   const std::string &whitespace = " \t");
 
   char *_mqttSubCmd;
 

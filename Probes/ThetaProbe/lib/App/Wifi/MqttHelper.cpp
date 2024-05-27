@@ -155,17 +155,33 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
   while (actMeasurement != nullptr) {
     if ((!actMeasurement->isTimeout()) &&
         (!isnanf(actMeasurement->meanValue))) {
-      sprintf(buff, "%llu %.02f;\0", actMeasurement->sensorId,
-              actMeasurement->meanValue);
 
-      uint16_t packetIdPub1 = mqttClient.publish(_mqttPubSens, 1, true, buff);
+      std::string topic = std::string(_mqttPubSens) + "/" 
+          + trim(actMeasurement->GetShortname());
+
+      sprintf(buff, "{\"%s\":%.02f}\0", 
+        actMeasurement->DumpSensType().c_str(), actMeasurement->meanValue);
+
+      uint16_t packetIdPub1 = mqttClient.publish(topic.c_str(), 1, true, buff);
       publishCount++;
-      // Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", _mqttPubSens,
-      //               packetIdPub1);
+      // '{"temp":{value_tmp}, "prs":{value_prs}, "hum":{value_hum} }'
+      Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", topic.c_str(),
+                     packetIdPub1);
     }
     actMeasurement = measurementPivot->GetNextMeasurement();
   }
   MqLog("(%lu) Published %i sensors.\n", OsHelpers::GetTickSeconds(), publishCount);
+}
+
+std::string MqttHelper::trim(const std::string &str, const std::string &whitespace) {
+  const auto strBegin = str.find_first_not_of(whitespace);
+  if (strBegin == std::string::npos)
+    return ""; // no content
+
+  const auto strEnd = str.find_last_not_of(whitespace);
+  const auto strRange = strEnd - strBegin + 1;
+
+  return str.substr(strBegin, strRange);
 }
 
 int MqttHelper::publishLog(uint8_t *message, uint16_t size) {
