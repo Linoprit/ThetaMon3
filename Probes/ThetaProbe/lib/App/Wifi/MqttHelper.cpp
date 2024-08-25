@@ -123,8 +123,8 @@ void MqttHelper::MqttSetup() {
 
   mqttClient.setServer(_mqttHost, _mqttPort);
   // If your broker requires authentication (username and password), set them
-  // below mqttClient.setCredentials("REPlACE_WITH_YOUR_USER",
-  // "REPLACE_WITH_YOUR_PASSWORD");
+  // below 
+  mqttClient.setCredentials("mosquitto", "public"); // TODO make this configurable
 
   WiFi.onEvent(WiFiEvent);
 }
@@ -149,23 +149,42 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
   // uint64: 20, float: 6, spaces: 1, EOL: 1
   char buff[30];
 
+  gpio::GpioInOut::instance().tglLedDebug();
+
   measurementPivot->ResetIter();
   Measurement *actMeasurement = measurementPivot->GetNextMeasurement();
 
   while (actMeasurement != nullptr) {
     if ((!actMeasurement->isTimeout()) &&
         (!isnanf(actMeasurement->meanValue))) {
-      sprintf(buff, "%llu %.02f;\0", actMeasurement->sensorId,
-              actMeasurement->meanValue);
 
-      uint16_t packetIdPub1 = mqttClient.publish(_mqttPubSens, 1, true, buff);
+      std::string topic = std::string(_mqttPubSens) + "/" 
+          + trim(actMeasurement->GetShortname());
+
+      sprintf(buff, "{\"%s\":%.02f}\0", 
+        actMeasurement->DumpSensType().c_str(), actMeasurement->meanValue);
+
+      uint16_t packetIdPub1 = mqttClient.publish(topic.c_str(), 1, true, buff);
       publishCount++;
-      // Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", _mqttPubSens,
+      // '{"temp":{value_tmp}, "prs":{value_prs}, "hum":{value_hum} }'
+      //Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", topic.c_str(),
       //               packetIdPub1);
     }
     actMeasurement = measurementPivot->GetNextMeasurement();
   }
   MqLog("(%lu) Published %i sensors.\n", OsHelpers::GetTickSeconds(), publishCount);
+  gpio::GpioInOut::instance().tglLedDebug();
+}
+
+std::string MqttHelper::trim(const std::string &str, const std::string &whitespace) {
+  const auto strBegin = str.find_first_not_of(whitespace);
+  if (strBegin == std::string::npos)
+    return ""; // no content
+
+  const auto strEnd = str.find_last_not_of(whitespace);
+  const auto strRange = strEnd - strBegin + 1;
+
+  return str.substr(strBegin, strRange);
 }
 
 int MqttHelper::publishLog(uint8_t *message, uint16_t size) {

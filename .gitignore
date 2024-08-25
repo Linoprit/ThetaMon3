@@ -38,3 +38,5 @@ Credentials.h
 *.pyc
 *.log*
 /Probes/ThetaProbe/data/MqttConfig.txt
+/Python/SensorIdTool/data/input/HomeAssistant.txt
+/Python/.idea/

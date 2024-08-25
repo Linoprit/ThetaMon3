@@ -8,31 +8,32 @@ void RelayTestTimerOn() {
   gpio::GpioInOut::instance().tstRelay(1, _on_);
   delay(500);
   gpio::GpioInOut::instance().clrRelayCh1();
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
 
   gpio::GpioInOut::instance().tstRelay(2, _on_);
   delay(500);
   gpio::GpioInOut::instance().clrRelayCh2();
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
 
   gpio::GpioInOut::instance().tstRelay(2, _off_);
   delay(500);
   gpio::GpioInOut::instance().clrRelayCh1();
   gpio::GpioInOut::instance().setRelayCh2();
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
 
   gpio::GpioInOut::instance().tstRelay(1, _off_);
   delay(500);
   gpio::GpioInOut::instance().setRelayCh1();
   gpio::GpioInOut::instance().setRelayCh2();
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
 
   delay(3600);
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
+  gpio::GpioInOut::instance().clrFlagTestTimer();
 }
 
 void TestSimpleOnOff() {
@@ -50,18 +51,19 @@ void TestSimpleOnOff() {
   TEST_ASSERT_EQUAL(LOW, digitalRead(LED_CONNECTED_PIN));
   delay(500);
 
+  TEST_ASSERT_EQUAL(LOW, gpio::GpioInOut::instance().isTestTimerActive());
   gpio::GpioInOut::instance().setRelayCh1();
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
   delay(500);
   gpio::GpioInOut::instance().clrRelayCh1();
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH1_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH1_PIN));
   delay(500);
 
   gpio::GpioInOut::instance().setRelayCh2();
-  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
   delay(500);
   gpio::GpioInOut::instance().clrRelayCh2();
-  TEST_ASSERT_EQUAL(LOW, digitalRead(RELAY_CH2_PIN));
+  TEST_ASSERT_EQUAL(HIGH, digitalRead(RELAY_CH2_PIN));
   delay(500);
 }
 

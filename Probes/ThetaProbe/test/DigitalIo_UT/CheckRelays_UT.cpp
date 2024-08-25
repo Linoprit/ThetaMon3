@@ -155,44 +155,51 @@ void CalcRelayStates_UT() {
 
   updateValuesCh1(&msmntPvt, 0.0);
   updateValuesCh1(&msmntPvt, 4.0);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_FALSE(
+    gpio::GpioInOut::instance().getRelayState(msmnt::Measurement::REL_01));
+  TEST_ASSERT_FALSE(
+      gpio::GpioInOut::instance().getRelayState(msmnt::Measurement::REL_02));
+  TEST_ASSERT_FALSE(
+    gpio::GpioInOut::instance().calcState(msmnt::Measurement::REL_01, &msmntPvt));
+
 
   updateValue(&msmntPvt, 72627769288089640u, 2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
 
   updateValue(&msmntPvt, 5333131681338097448u, -5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, HIGH));
 
   updateValue(&msmntPvt, 17798800300682535208u, 2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
 
   updateValuesCh1(&msmntPvt, -5.1);
   updateValuesCh2(&msmntPvt, 2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
 
   updateValue(&msmntPvt, 5332846427711201320u, -2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
   updateValue(&msmntPvt, 14484146576875228968u, 5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
 
   updateValue(&msmntPvt, 9872197974920462120u, -2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
   updateValue(&msmntPvt, 17798800300682535208u, 5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
 
   updateValue(&msmntPvt, 7638694032459628328u, -2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
   updateValue(&msmntPvt, 4179915027513875496u, 5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
 
   updateValuesCh1(&msmntPvt, -2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, HIGH));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, LOW));
   updateValuesCh2(&msmntPvt, 5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
 
   updateValue(&msmntPvt, 15060624921359795240u, -5.1);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
 
   updateValue(&msmntPvt, 16789727009993785128u, 2.9);
-  TEST_ASSERT_TRUE(testCycle(&msmntPvt, LOW, LOW));
+  TEST_ASSERT_TRUE(testCycle(&msmntPvt, HIGH, HIGH));
 }

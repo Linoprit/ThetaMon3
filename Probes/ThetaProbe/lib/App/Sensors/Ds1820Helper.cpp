@@ -6,11 +6,10 @@ namespace msmnt {
 using namespace std;
 
 Ds1820Helper::Ds1820Helper(Measurement::SensorChannel channel,
-                           uint8_t oneWirePinOut, uint8_t oneWirePinIn,
-                           uint8_t resolution,
+                           uint8_t oneWirePinOut, uint8_t resolution,
                            MeasurementPivot *measurementPivot)
-    : _oneWireCh(oneWirePinOut, oneWirePinIn), _sensorsCh(&_oneWireCh),
-      _channel(channel), _measurementPivot(measurementPivot) {
+    : _oneWireCh(oneWirePinOut), _sensorsCh(&_oneWireCh), _channel(channel),
+      _measurementPivot(measurementPivot) {
   _sensorsCh.setResolution(resolution);
 }
 

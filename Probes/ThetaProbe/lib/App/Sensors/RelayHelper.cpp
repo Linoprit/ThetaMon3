@@ -16,8 +16,14 @@ RelayHelper::RelayHelper(MeasurementPivot *measurementPivot):
 
 void RelayHelper::cycle() {
   gpio::GpioInOut::instance().calcRelayStates(_measurementPivot);
-  _measurementPivot->UpdateValue(_idRelayNr1, digitalRead(RELAY_CH1_PIN));
-  _measurementPivot->UpdateValue(_idRelayNr2, digitalRead(RELAY_CH2_PIN));
+
+  bool rel1_val = 
+    gpio::GpioInOut::instance().getRelayState(msmnt::Measurement::REL_01);
+  bool rel2_val = 
+    gpio::GpioInOut::instance().getRelayState(msmnt::Measurement::REL_02);
+
+  _measurementPivot->UpdateValue(_idRelayNr1, rel1_val);
+  _measurementPivot->UpdateValue(_idRelayNr2, rel2_val);
 }
 
 } // namespace msmnt

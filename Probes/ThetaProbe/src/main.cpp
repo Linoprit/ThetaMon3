@@ -42,7 +42,7 @@ void loop() {
   aliveLedCycleCount++;
   if (aliveLedCycleCount > 100) {
     aliveLedCycleCount = 0;
-    gpio::GpioInOut::instance().tglLedAlive();
+    gpio::GpioInOut::instance().tglLedAlive();    
   }
 
   delay(10);
@@ -130,5 +130,8 @@ void loop() {
 /*
 mosquitto_sub -h localhost -t Lager/sens
 mosquitto_sub -h localhost -t Lager/log
+mosquitto_sub -u <user> -P <pass> -h 192.168.178.103 -t Lager/log
 mosquitto_pub -t 'Lager/cmd' -m 'printMeasures'
+
+ssh -v harald@192.168.178.108
 */

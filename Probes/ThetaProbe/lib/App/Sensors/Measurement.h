@@ -237,6 +237,10 @@ public:
     return "Error";
   }
 
+  std::string DumpSensType(){
+    return DumpSensType(sensType);
+  }
+
   static std::string DumpSensType(SensorType sensType) {
     switch (sensType) {
     case SensorType::TEMP:

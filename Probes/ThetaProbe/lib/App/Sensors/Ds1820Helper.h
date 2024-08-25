@@ -13,9 +13,8 @@ namespace msmnt {
 
 class Ds1820Helper {
 public:
-  Ds1820Helper(Measurement::SensorChannel channel, uint8_t onwWirePinOut,
-               uint8_t oneWirePinIn, uint8_t resolution,
-               MeasurementPivot *measurementPivot);
+  Ds1820Helper(Measurement::SensorChannel channel, uint8_t onwWirePin,
+               uint8_t resolution, MeasurementPivot *measurementPivot);
   virtual ~Ds1820Helper(){};
 
   void initHardware();
