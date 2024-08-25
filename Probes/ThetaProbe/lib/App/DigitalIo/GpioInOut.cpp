@@ -18,9 +18,13 @@ void GpioInOut::initHardware() {
   pinMode(RELAY_CH1_PIN, OUTPUT);
   pinMode(RELAY_CH2_PIN, OUTPUT);
 
+  clrRelayCh1();
+  clrRelayCh2();
+
   relayTestTimer = xTimerCreate(
-      "RelayTestTimer", pdMS_TO_TICKS(4000), pdFALSE, (void *)0,
+      "RelayTestTimer", pdMS_TO_TICKS(120000), pdFALSE, (void *)0,
       reinterpret_cast<TimerCallbackFunction_t>(relayTestTimerCallback));
+  clrFlagTestTimer();
 }
 
 void GpioInOut::calcRelayStates(msmnt::MeasurementPivot *measurementPivot) {
@@ -60,10 +64,10 @@ void GpioInOut::setRelayState(Measurement::RelayChannel relayNumber,
 bool GpioInOut::getRelayState(Measurement::RelayChannel relayNumber) {
   switch (relayNumber) {
   case Measurement::RelayChannel::REL_01:
-    return static_cast<bool>(digitalRead(RELAY_CH1_PIN));
+    return static_cast<bool>(!digitalRead(RELAY_CH1_PIN));
     break;
   case Measurement::RelayChannel::REL_02:
-    return static_cast<bool>(digitalRead(RELAY_CH2_PIN));
+    return static_cast<bool>(!digitalRead(RELAY_CH2_PIN));
     break;
   default:
     return false;
@@ -122,17 +126,21 @@ GpioInOut::getRelayChannelCount(Measurement::RelayChannel relayNmber,
   return result;
 }
 
+bool GpioInOut::isTestTimerActive(){
+  return _isTestTimerActive;
+}
+
 void GpioInOut::setRelayCh1() {
   if (_isTestTimerActive) {
     return;
   }
-  digitalWrite(RELAY_CH1_PIN, HIGH);
+  digitalWrite(RELAY_CH1_PIN, LOW);
 }
 void GpioInOut::clrRelayCh1() {
   if (_isTestTimerActive) {
     return;
   }
-  digitalWrite(RELAY_CH1_PIN, LOW);
+  digitalWrite(RELAY_CH1_PIN, HIGH);
 }
 void GpioInOut::tglRelayCh1() {
   if (_isTestTimerActive) {
@@ -145,13 +153,13 @@ void GpioInOut::setRelayCh2() {
   if (_isTestTimerActive) {
     return;
   }
-  digitalWrite(RELAY_CH2_PIN, HIGH);
+  digitalWrite(RELAY_CH2_PIN, LOW);
 }
 void GpioInOut::clrRelayCh2() {
   if (_isTestTimerActive) {
     return;
   }
-  digitalWrite(RELAY_CH2_PIN, LOW);
+  digitalWrite(RELAY_CH2_PIN, HIGH);
 }
 void GpioInOut::tglRelayCh2() {
   if (_isTestTimerActive) {
@@ -167,16 +175,16 @@ void GpioInOut::tstRelay(uint8_t relayChannel, bool on) {
   switch (relayChannel) {
   case 1:
     if (on) {
-      digitalWrite(RELAY_CH1_PIN, HIGH);
-    } else {
       digitalWrite(RELAY_CH1_PIN, LOW);
+    } else {
+      digitalWrite(RELAY_CH1_PIN, HIGH);
     }
     break;
   case 2:
     if (on) {
-      digitalWrite(RELAY_CH2_PIN, HIGH);
-    } else {
       digitalWrite(RELAY_CH2_PIN, LOW);
+    } else {
+      digitalWrite(RELAY_CH2_PIN, HIGH);
     }
     break;
   default:

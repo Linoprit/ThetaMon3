@@ -27,7 +27,9 @@ public:
     RELAY_02 = 11,
   };
 
-  MeasurementPivot(){};
+  MeasurementPivot(){
+    _indexIter = 0;
+  };
   ~MeasurementPivot(){};
 
   Measurement *GetMeasurement(uint8_t index) {

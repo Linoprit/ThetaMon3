@@ -123,8 +123,8 @@ void MqttHelper::MqttSetup() {
 
   mqttClient.setServer(_mqttHost, _mqttPort);
   // If your broker requires authentication (username and password), set them
-  // below mqttClient.setCredentials("REPlACE_WITH_YOUR_USER",
-  // "REPLACE_WITH_YOUR_PASSWORD");
+  // below 
+  mqttClient.setCredentials("mosquitto", "public"); // TODO make this configurable
 
   WiFi.onEvent(WiFiEvent);
 }
@@ -149,6 +149,8 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
   // uint64: 20, float: 6, spaces: 1, EOL: 1
   char buff[30];
 
+  gpio::GpioInOut::instance().tglLedDebug();
+
   measurementPivot->ResetIter();
   Measurement *actMeasurement = measurementPivot->GetNextMeasurement();
 
@@ -165,12 +167,13 @@ void MqttHelper::pubishMeasurements(MeasurementPivot *measurementPivot) {
       uint16_t packetIdPub1 = mqttClient.publish(topic.c_str(), 1, true, buff);
       publishCount++;
       // '{"temp":{value_tmp}, "prs":{value_prs}, "hum":{value_hum} }'
-      Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", topic.c_str(),
-                     packetIdPub1);
+      //Serial.printf("Pub on topic '%s' at QoS 1, Id: %lu\n", topic.c_str(),
+      //               packetIdPub1);
     }
     actMeasurement = measurementPivot->GetNextMeasurement();
   }
   MqLog("(%lu) Published %i sensors.\n", OsHelpers::GetTickSeconds(), publishCount);
+  gpio::GpioInOut::instance().tglLedDebug();
 }
 
 std::string MqttHelper::trim(const std::string &str, const std::string &whitespace) {

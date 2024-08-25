@@ -2,14 +2,15 @@ import time
 import paho.mqtt.client as mqtt
 from random import randrange
 
-# mosquitto_pub -t 'Lager/cmd' -m 'printMeasures'
-# mosquitto_sub -h localhost -t Lager/sens
-# systemctl start openhab.service
-
+# mosquitto_pub -u mosquitto -P public -h 192.168.178.103 -t 'Lager/cmd' -m 'printMeasures'
+# mosquitto_sub -u mosquitto -P public -h 192.168.178.103 -t Lager/sens
 
 # MQTT broker details
-broker_address = "192.168.178.101"
+# broker_address = "192.168.178.101" # Local VM
+broker_address = "192.168.178.103" # Raspberry
 broker_port = 1883
+username = 'mosquitto'
+password = 'public'
 
 # MQTT topic to publish messages to
 topic_lager = "Lager/sens/ESP1Tmp"
@@ -31,6 +32,7 @@ def on_publish(client, userdata, mid):
 
 # Create MQTT client instance
 client = mqtt.Client()
+client.username_pw_set(username, password)
 
 # Assign callbacks
 client.on_connect = on_connect

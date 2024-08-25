@@ -59,6 +59,7 @@ public:
   void setFlagTestTimer() { _isTestTimerActive = true; };
   void clrFlagTestTimer() { _isTestTimerActive = false; };
 
+  bool isTestTimerActive();
   void setRelayTestTimer();
   bool calcState(Measurement::RelayChannel relayNumber,
                  MeasurementPivot *measurementPivot);
