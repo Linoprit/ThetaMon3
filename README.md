@@ -31,3 +31,97 @@ ThetaMon3 took only a half year of development, not only because large parts of 
 
 ## Getting started
 
+Refer to: [SettingUpThetaMonProbe](https://github.com/Linoprit/ThetaMon3/blob/main/Doc/SettingUpThetaMonProbe.pdf).<br>
+You need a working Visual Studio Code, together with PlatformIO. 
+
+## Integrating to Home Assistant
+
+The probes data is transmittet via mqtt, so you could integrate it whereever you want.
+Because I use HA, I describe the integration for it. 
+
+The name of your location (spot), where the probe is placed is defined in „MqttConfig.txt“, that resides on your ESP. Every sensor has a shortname, defined in „ID_Table_U64.txt“. These two names result in a mqtt publishing, in the form \<Location>/sens/\<Sensor-Shortname>. Your Home Automation system has to subscribe every sensor. The sensor data is transmitted in Json-format, i.e. "{"HUMID":51.21}"
+
+Your Mosquitto installation and setup should have been done in the last step. You could use Home Assistants Mosquitto plugin.<br>
+Go to the file /homeassistant/configuration.yaml, use the text-editor-plugin. 
+Create a new section 
+```
+mqtt:
+    sensor:
+```
+Then for every sensor enter a block like this:
+```
+    - name: "<Location> <Sensor-Shortname>"
+      unique_id: <Location><Sensor-Shortname>
+      state_class: "measurement"
+      state_topic: "<Location>/sens/<Sensor-Shortname>"
+      unit_of_measurement: "°C"
+      expire_after: 480
+      value_template: "{{ value_json.TEMP }}"
+```
+### Unit and value_template for other sensors:
+
+Pressure:
+```
+      unit_of_measurement: "hPa"
+      value_template: "{{ value_json.PRESS }}"
+```
+
+Hummidity:
+```
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.HUMID }}"
+```
+
+Relay:
+```
+      unit_of_measurement: "0/1"
+      expire_after: 480
+      value_template: "{{ value_json.RELAY }}"
+```
+
+Example configuration:
+```
+# -- ESP32 Sensors --
+mqtt:
+    sensor:    
+    - name: "Lager Temperatur"
+      unique_id: LagerTmp
+      state_class: "measurement"
+      state_topic: "Lager/sens/LagerTmp"
+      unit_of_measurement: "°C"
+      expire_after: 480
+      value_template: "{{ value_json.TEMP }}"
+    - name: "Lager Luftdruck"
+      unique_id: LagerPrs
+      state_class: "measurement"
+      state_topic: "Lager/sens/LagerPrs"
+      unit_of_measurement: "hPa"
+      expire_after: 480
+      value_template: "{{ value_json.PRESS }}"
+    - name: "Lager Luftfeuchte"
+      unique_id: LagerHum
+      state_topic: "Lager/sens/LagerHum"
+      state_class: "measurement"
+      unit_of_measurement: "%"
+      expire_after: 480
+      value_template: "{{ value_json.HUMID }}"
+    - name: "Lager  Relay 1"
+      unique_id: LagerRl1
+      state_topic: "Lager/sens/LagerRl1"
+      state_class: "measurement"
+      unit_of_measurement: "0/1"
+      expire_after: 480
+      value_template: "{{ value_json.RELAY }}"
+    - name: "Lager  Relay 2"
+      unique_id: LagerRl2
+      state_topic: "Lager/sens/LagerRl2"
+      state_class: "measurement"
+      unit_of_measurement: "0/1"
+      expire_after: 480
+      value_template: "{{ value_json.RELAY }}"
+```
+
+## ToDo
+- describe mosquitto_sub -u \<user> -P \<pass> -h <server> -t \<Location>/log
+- describe mosquitto_pub -t '\<Location>/cmd' -m '\<Command>'
+- Command-Line reference, from file Interpreter.cpp
