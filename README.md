@@ -126,7 +126,7 @@ mqtt:
       value_template: "{{ value_json.RELAY }}"
 ```
 
-## Read Probe-Logging
+## Listen to the probes logging
 Every probe publishes it's logging. It can be monitored with
 ```
 mosquitto_sub -u mosquitto -P public -h <server-ip> -t <Location>/log
@@ -140,6 +140,7 @@ mosquitto_pub -t '<Location>/cmd' -m '<Command>'
 Best practise is to have a second terminal opened with a running log-subscription.
 
 ## ToDo
-
-- Command-Line reference, from file Interpreter.cpp
-- How TM3 works. Measurement_Pivot, CommLine-Interface...?
+- Explain how TM3 works. Measurement_Pivot, CommLine-Interface...?
+- Discussion, if digital input / output channels are needed.
+- Make Mqtt-credentials changeable, append them to MqttConfig.
+- Move all Mqtt related commands in a structure and apply the "hasChanged" mechanism, used in sensor-configuration.
