@@ -37,6 +37,8 @@ ThetaMon3 took only a half year of development, not only because large parts of 
 Refer to: [SettingUpThetaMonProbe](https://github.com/Linoprit/ThetaMon3/blob/main/Doc/SettingUpThetaMonProbe.pdf).<br>
 You need a working Visual Studio Code, together with PlatformIO. 
 
+For a complete command-reference see [CommandLineReference](https://github.com/Linoprit/ThetaMon3/blob/main/Doc/SettingUpThetaMonProbe.pdf).
+
 ## Integrating to Home Assistant
 
 The probes data is transmitted via mqtt, so you could integrate it whereever you want.
