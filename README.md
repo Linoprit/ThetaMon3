@@ -36,7 +36,7 @@ You need a working Visual Studio Code, together with PlatformIO.
 
 ## Integrating to Home Assistant
 
-The probes data is transmittet via mqtt, so you could integrate it whereever you want.
+The probes data is transmitted via mqtt, so you could integrate it whereever you want.
 Because I use HA, I describe the integration for it. 
 
 The name of your location (spot), where the probe is placed is defined in „MqttConfig.txt“, that resides on your ESP. Every sensor has a shortname, defined in „ID_Table_U64.txt“. These two names result in a mqtt publishing, in the form \<Location>/sens/\<Sensor-Shortname>. Your Home Automation system has to subscribe every sensor. The sensor data is transmitted in Json-format, i.e. "{"HUMID":51.21}"
@@ -121,7 +121,20 @@ mqtt:
       value_template: "{{ value_json.RELAY }}"
 ```
 
+## Read Probe-Logging
+Every probe publishes it's logging. It can be monitored with
+```
+mosquitto_sub -u mosquitto -P public -h <server-ip> -t <Location>/log
+```
+
+## Commands from remote
+Via Mosquitto commands can be sent to your probe with
+```
+mosquitto_pub -t '<Location>/cmd' -m '<Command>'
+```
+Best practise is to have a second terminal opened with a running log-subscription.
+
 ## ToDo
-- describe mosquitto_sub -u \<user> -P \<pass> -h <server> -t \<Location>/log
-- describe mosquitto_pub -t '\<Location>/cmd' -m '\<Command>'
+
 - Command-Line reference, from file Interpreter.cpp
+- How TM3 works. Measurement_Pivot, CommLine-Interface...?
