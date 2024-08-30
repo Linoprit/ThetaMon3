@@ -6,13 +6,16 @@ ThetaMon3 is based on an ESP32 controller, which reads a bunch of sensors and se
 
 ## Features Overview
 
-- Reads DS18B20 sensors arrays, connected to two channels. In the current configuration, it can read up to four sensors per channel. If you need more, simply increase DS18B20_MAX_DEVICES in Config.h.
+- Reads DS18B20 sensor array, connected to two channels. In the current configuration, it can read up to four sensors per channel. If you need more, simply increase DS18B20_MAX_DEVICES in Config.h.
 - It also reads BME280 values, temp, hummidity and pressure.
 - Currently, every channel needs at least one sensor. So a minimum configuration is two DS18B20 sensors and one BME280. 
 - Based on a look-up table, placed as file image on the controller, two relays are switched, depending on the given thresholds.
 - Measurements are taken every minute and the average of these measurements are sent to an Mqtt broker every five minutes.
 - There is a command-line-interface, you could connect to with a terminal programm, like GTK-Term. So you can have insight, what is going on in your setup and you can change several settings with it.
 - Also, there are Mqtt-channels for remote accessing the device, or read loggings.
+
+Why two OneWire-channels?<br>
+I simply had the problem that in the workshop the location of the probe was in the middle of the sensor chain. Unfortunately, it was not possible to place it at one end or the other of the sensor chain.
 
 ## What's it all about? 
 
