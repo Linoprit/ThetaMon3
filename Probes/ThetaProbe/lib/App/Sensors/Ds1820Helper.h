@@ -22,9 +22,10 @@ public:
 
 private:
   OneWire _oneWireCh;
-  DallasTemperature _sensorsCh;
+  DallasTemperature _sensorsCh;  
   Measurement::SensorChannel _channel;
   MeasurementPivot *_measurementPivot;
+  uint8_t _resolution;
 };
 } // namespace msmnt
 #endif

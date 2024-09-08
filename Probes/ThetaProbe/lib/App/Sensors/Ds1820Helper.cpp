@@ -10,13 +10,14 @@ Ds1820Helper::Ds1820Helper(Measurement::SensorChannel channel,
                            MeasurementPivot *measurementPivot)
     : _oneWireCh(oneWirePinOut), _sensorsCh(&_oneWireCh), _channel(channel),
       _measurementPivot(measurementPivot) {
-  _sensorsCh.setResolution(resolution);
+        _resolution = resolution;
 }
 
 void Ds1820Helper::initHardware(void) {
   uint8_t address[8];
   uint8_t sensorCount = 0;
   _sensorsCh.begin();
+  _sensorsCh.setResolution(_resolution);
   _oneWireCh.reset_search();
 
   MqLog("Channel %s, DS1820 sensors present: %i.\n",

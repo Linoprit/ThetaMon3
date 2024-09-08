@@ -21,7 +21,7 @@ constexpr uint8_t DS18B20_PRECISION = 12;
 // constexpr uint8_t DS18B20_PRECISION = 9;
 
 constexpr uint8_t DS18B20_SEARCH_RETRIES = 6;
-constexpr uint8_t DS18B20_MAX_DEVICES = 4; // in one channel
+constexpr uint8_t DS18B20_MAX_DEVICES = 5; // in one channel
 
 // [ms] doAllMeasure(): how long to wait until all devices finished conversion
 // If this time is passed, sensor-value is set to NAN
